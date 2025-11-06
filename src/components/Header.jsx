@@ -1,26 +1,25 @@
+import { IoIosInformationCircle } from "react-icons/io";
+import { BsList } from "react-icons/bs";
+
 const Header = () => {
   return (
-    <nav className="w-full h-34 flex flex-col box-border border-b">
+    <nav className="w-full h-34 flex flex-col box-border border-b-neutral-300 border-b-2">
       {/* //* Small Info */}
-      <div className="small-info h-[40%] bg-[#fcd5ce] px-8 flex gap-5 items-center box-border">
-        <img
-          src=""
-          alt=""
-          className="info-icon h-5 w-5 rounded-full outline-1  object-cover"
-        />
+      <div className="small-info h-[40%] bg-[#fdf1ef] px-8 flex gap-3 items-center box-border">
+        <div className="text-2xl text-blue-600">
+          <IoIosInformationCircle />
+        </div>
         <h5 className="font-semibold">
           Welcome to my creative dashboard — where design meets automation
         </h5>
       </div>
       {/* //* Header */}
-      <div className="header h-[60%] bg-white px-8 flex justify-between items-center box-border">
+      <div className="header h-[60%] bg-[#f9dcc4] px-5 flex justify-between items-center box-border">
         {/* //* My-name & Title */}
         <div className="short-title flex gap-5 items-center">
-          <img
-            src=""
-            alt=""
-            className="sidebar h-5 w-5 outline-1 object-cover mt-7"
-          />
+          <div className="text-3xl mt-9 text-gray-600">
+            <BsList />
+          </div>
           <div className="me">
             <h1 className="my-name font-bold text-3xl">Kanishq</h1>
             <h4 className="my-title font-extralight text-md">
