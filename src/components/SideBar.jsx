@@ -33,7 +33,9 @@ const SideBar = () => {
           <BiBrain />
         </div>
       </div>
+
       <hr className="w-12 m-auto h-2 my-4" />
+
       {/* //! Secondary links */}
       <div className="flex flex-col items-center justify-start gap-4">
         <div className="w-8 h-8 bg-orange-600 rounded-lg font-bold px-1.5 text-lg flex items-center justify-center">
@@ -46,7 +48,9 @@ const SideBar = () => {
           <AiOutlineRobot />
         </div>
       </div>
+
       <hr className="w-12 m-auto h-2 my-4" />
+
       {/* //! sidebar footer links */}
       <hr className="w-12 m-auto h-2 mt-14 mb-4" />
       <div className="flex flex-col justify-start text-neutral-600 text-left text-sm px-3">
