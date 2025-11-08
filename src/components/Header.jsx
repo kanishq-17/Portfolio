@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <nav className="w-full h-34 flex flex-col box-border border-b-neutral-300 border-b-2">
       {/* //* Small Info */}
-      <div className="small-info h-[40%] bg-[#fdf1ef] px-8 flex gap-3 items-center box-border">
+      <div className="small-info h-[40%] bg-[#fef5ed] px-8 flex gap-3 items-center box-border text-black">
         <div className="text-2xl text-blue-600">
           <IoIosInformationCircle />
         </div>
@@ -14,7 +14,7 @@ const Header = () => {
         </h5>
       </div>
       {/* //* Header */}
-      <div className="header h-[60%] bg-[#f9dcc4] px-5 flex justify-between items-center box-border">
+      <div className="header h-[60%] bg-[#fcd5ce] px-5 flex justify-between items-center box-border text-black">
         {/* //* My-name & Title */}
         <div className="short-title flex gap-5 items-center">
           <div className="text-3xl mt-9 text-gray-600">
@@ -29,14 +29,14 @@ const Header = () => {
         </div>
         {/* //* CTA Buttons */}
         <div className="call-to-actions flex gap-5 items-end">
-          <button className="contact-me-btn px-5 py-2 outline-1 rounded-md font-medium ">
+          <button className="contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
             Contact
           </button>
-          <button className="freelance-btn px-5 py-2 outline-1 rounded-md font-medium ">
+          <button className="freelance-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
             Let's Collaborate
           </button>
-          <h5 className="w-10 h-10 rounded-full object-cover outline-1 mt-2 font-bold text-xl flex items-center justify-center">
-            K
+          <h5 className="w-10 h-10 rounded-full object-cover outline-1 mt-2 font-bold text-xl flex items-center justify-center outline-gray-600">
+           <img src="/image-2.png" alt="" className="w-full h-full object-cover rounded-full" />
           </h5>
         </div>
       </div>

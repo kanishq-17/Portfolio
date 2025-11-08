@@ -4,7 +4,7 @@ import SideBar from "./components/SideBar";
 
 const App = () => {
   return (
-    <div className="bg-black relative">
+    <div className="bg-[#f4f1f1] relative">
       <Header />
       <SideBar />
       <CenterPage />
