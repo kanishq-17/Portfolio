@@ -12,6 +12,10 @@ import { MdClear } from "react-icons/md";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { IoChevronBackOutline } from "react-icons/io5";
 
+import { FaRegCircleUser } from "react-icons/fa6";
+import { GiJusticeStar } from "react-icons/gi";
+import { ImCool } from "react-icons/im";
+
 const CenterPage = () => {
   const [mic, setMic] = useState();
   const inputBoxLinks = [
@@ -68,6 +72,12 @@ const CenterPage = () => {
       cta: "Read the post",
     },
   ]);
+
+  // const [forYouBtn, setForYouBtn] = useState(true);
+  // const [aiWorkBtn, setAiWorkBtn] = useState(false);
+  // const [mostPopBtn, setMostPopBtn] = useState(false);
+
+  const [ctaBtnCounter, setCtaBtnCounter] = useState(1);
 
   return (
     <div className="main-page w-full pb-10 bg-[#f4f1f1] text-black">
@@ -142,7 +152,8 @@ const CenterPage = () => {
         Build from Scratch
       </h2>
       <div className="w-3/4 m-auto h-112 flex gap-5 items-center pt-8">
-        <div className="catalogue-box w-1/2 rounded-md bg-amber-100 h-full relative p-3">
+        {/* //? Catalogue box */}
+        <div className="catalogue-box w-1/2 rounded-md bg-amber-600 h-full relative p-3 outline-1 outline-gray-300">
           <span className="absolute right-2 top-2 text-2xl cursor-pointer">
             <MdClear />
           </span>
@@ -193,7 +204,148 @@ const CenterPage = () => {
             </div>
           </div>
         </div>
-        <div className="recent-project-box w-full rounded-md h-full bg-amber-100"></div>
+        {/* //? Project showing box */}
+        <div className="recent-project-box w-full rounded-md h-full bg-black text-white outline-1 outline-gray-300">
+          <div className="flex justify-between items-center p-4 border-gray-300  border-b">
+            <h2>Popular Templates</h2>
+            <h5 className="text-blue-500/80 cursor-pointer  hover:underline hover:text-blue-700">
+              Browse all templates
+            </h5>
+          </div>
+          {/* //? project-showing-cta-links */}
+          <div className="project-showing-cta-links flex p-4 pt-8 items-center gap-3 font-medium text-sm">
+            {/* //* BTN - 1 */}
+            <button
+              onClick={() => {
+                setCtaBtnCounter(1);
+              }}
+              className={`cursor-pointer rounded-md px-3 py-0.5 outline-1 flex items-center gap-2 ${
+                ctaBtnCounter === 1
+                  ? "outline-blue-500/80 bg-blue-300/30 text-blue-500/80"
+                  : "outline-gray-300"
+              }  `}
+            >
+              <span>
+                <FaRegCircleUser />
+              </span>
+              <p>For you</p>
+            </button>
+            {/* //* BTN - 2 */}
+            <button
+              onClick={() => {
+                setCtaBtnCounter(2);
+              }}
+              className={`cursor-pointer rounded-md px-3 py-0.5 outline-1 flex items-center gap-2 ${
+                ctaBtnCounter === 2
+                  ? "outline-blue-500/80 bg-blue-300/30 text-blue-500/80"
+                  : "outline-gray-300"
+              }  `}
+            >
+              <span>
+                <GiJusticeStar />
+              </span>
+              <p>AI Workflows</p>
+            </button>
+            {/* //* BTN - 3 */}
+            <button
+              onClick={() => {
+                setCtaBtnCounter(3);
+              }}
+              className={`cursor-pointer rounded-md px-3 py-0.5 outline-1 flex items-center gap-2 ${
+                ctaBtnCounter === 3
+                  ? "outline-blue-500/80 bg-blue-300/30 text-blue-500/80"
+                  : "outline-gray-300"
+              }  `}
+            >
+              <span>
+                <ImCool />
+              </span>
+              <p>Most popular</p>
+            </button>
+          </div>
+
+          {/* //? Project-showing-card */}
+          <div className="project-showing-card  w-full px-4 flex items-center gap-4 justify-start">
+            {/* //* card - 1 */}
+            <div className="card-1 w-1/3 bg-blue-700 p-4 outline-1 outline-gray-300 rounded-lg">
+              <div className="tech-stack-img flex items-center w-[60%] outline-1 outline-gray-300 rounded-md">
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+              </div>
+              <p className="text-md pt-8 font-semibold w-full">
+                Save new Gmail attachments to Google Drive with a filter
+              </p>
+              <p className="pt-10 text-sm font-medium">
+                ⭐ Recommended for you
+              </p>
+            </div>
+            {/* //* card - 2 */}
+            <div className="card-2 w-1/3 bg-blue-700 p-4 outline-1 outline-gray-300 rounded-lg">
+              <div className="tech-stack-img flex items-center w-[60%] outline-1 outline-gray-300 rounded-md">
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+              </div>
+              <p className="text-md pt-8 font-semibold w-full">
+                Save new Gmail attachments to Google Drive with a filter
+              </p>
+              <p className="pt-10 text-sm font-medium">
+                ⭐ Recommended for you
+              </p>
+            </div>
+            {/* //* card - 3 */}
+            <div className="card-3 w-1/3 bg-blue-700 p-4 outline-1 outline-gray-300 rounded-lg">
+              <div className="tech-stack-img flex items-center w-[60%] outline-1 outline-gray-300 rounded-md">
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+                <img
+                  src=""
+                  alt=""
+                  className="w-full h-10 bg-pink-400 object-cover"
+                />
+              </div>
+              <p className="text-md pt-8 font-semibold w-full">
+                Save new Gmail attachments to Google Drive with a filter
+              </p>
+              <p className="pt-10 text-sm font-medium">
+                ⭐ Recommended for you
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
