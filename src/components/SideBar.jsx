@@ -11,13 +11,10 @@ import { IoDocuments } from "react-icons/io5"; // knowledge-base-fill
 import { IoDocumentsOutline } from "react-icons/io5"; //knowledge-base-line
 import { AiFillRobot } from "react-icons/ai"; // ai-lab-fill
 import { AiOutlineRobot } from "react-icons/ai"; // ai-lab-line
-// stories
-// knowledge base
-// ai lab
 
 const SideBar = () => {
   return (
-    <div className="sidebar bg-[#f8edeb] min-w-16 absolute h-full pt-4 text-black">
+    <div className="sidebar bg-[#f8edeb] min-w-16 fixed h-screen  top-0  pt-4 text-black">
       {/* //! Primary links */}
       <div className="flex flex-col items-center justify-start gap-4">
         <div className="experiment w-8 h-8 bg-orange-600 rounded-lg font-bold px-1.5 text-lg flex items-center justify-center">

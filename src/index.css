@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+.glass-icon {
+  @apply w-10 h-10 flex items-center justify-center rounded-xl 
+         bg-white/10 backdrop-blur-md border border-white/20 
+         shadow-md text-white text-lg 
+         transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-lg;
+}

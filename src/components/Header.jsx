@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { IoIosInformationCircle } from "react-icons/io";
 import { BsList } from "react-icons/bs";
+import { IoMdCheckmark } from "react-icons/io";
 
 const Header = () => {
+  const [myLogo, setMyLogo] = useState();
+  const [mySmallInfo, setMySmallInfo] = useState();
+
   return (
     <nav className="w-full h-34 flex flex-col box-border border-b-neutral-300 border-b-2">
       {/* //* Small Info */}
@@ -28,16 +34,59 @@ const Header = () => {
           </div>
         </div>
         {/* //* CTA Buttons */}
-        <div className="call-to-actions flex gap-5 items-end">
-          <button className="contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
+        <div className="call-to-actions flex gap-5 items-end relative">
+          <button className="cursor-pointer contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
             Contact
           </button>
-          <button className="freelance-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
+          <button className="cursor-pointer bg-red-950 text-red-400 border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2  rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
+            <span className="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
             Let's Collaborate
           </button>
-          <h5 className="w-10 h-10 rounded-full object-cover outline-1 mt-2 font-bold text-xl flex items-center justify-center outline-gray-600">
-           <img src="/image-2.png" alt="" className="w-full h-full object-cover rounded-full" />
+          <h5 className="w-10 h-10 rounded-full object-cover mt-2 font-bold text-xl flex items-center justify-center">
+            <img
+              onMouseEnter={() => setMyLogo(true)}
+              onMouseLeave={() => {
+                setMyLogo(false);
+              }}
+              onClick={() => {
+                setMyLogo(false);
+                setMySmallInfo((prev) => !prev);
+              }}
+              src="/image-2.png"
+              alt=""
+              className="w-full h-full object-cover rounded-full cursor-pointer"
+            />
           </h5>
+          <p
+            className={`bg-black text-white rounded-md px-3 py-1 font-medium absolute right-12 top-3 ${
+              myLogo ? "none" : "hidden"
+            }`}
+          >
+            Kanishq
+          </p>
+        </div>
+        <div
+          className={`z-10 rounded-sm outline-1 outline-gray-300 px-3 py-2 bg-white w-1/5 absolute top-32 right-5 ${
+            mySmallInfo ? "none" : "hidden"
+          }`}
+        >
+          <p className="text-gray-600 text-sm mb-2 text-center">
+            try.kanishq@gmail.com
+          </p>
+          <div className="flex items-center justify-between bg-blue-300/30 px-2 py-2 rounded-sm">
+            <div className="flex items-center gap-3">
+              <h4 className="rounded-full w-10 h-10 outline-1 outline-gray-300 text-center pt-2 font-semibold bg-blue-400/50">
+                K
+              </h4>
+              <div className="text-blue-800">
+                <h5 className="text-md font-medium">Kanishq</h5>
+                <p className="text-sm">Individual Developer</p>
+              </div>
+            </div>
+            <span className="text-blue-800 text-2xl">
+              <IoMdCheckmark />
+            </span>
+          </div>
         </div>
       </div>
     </nav>
