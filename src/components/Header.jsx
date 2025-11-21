@@ -3,6 +3,7 @@ import { useState } from "react";
 import { IoIosInformationCircle } from "react-icons/io";
 import { BsList } from "react-icons/bs";
 import { IoMdCheckmark } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [myLogo, setMyLogo] = useState();
@@ -35,13 +36,17 @@ const Header = () => {
         </div>
         {/* //* CTA Buttons */}
         <div className="call-to-actions flex gap-5 items-end relative">
-          <button className="cursor-pointer contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
-            Contact
-          </button>
-          <button className="cursor-pointer bg-red-950 text-red-400 border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2  rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
-            <span className="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
-            Let's Collaborate
-          </button>
+          <Link to="/contact">
+            <button className="cursor-pointer contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
+              Contact
+            </button>
+          </Link>
+          <Link to="/lets-collaborate">
+            <button className="cursor-pointer bg-red-950 text-red-400 border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2  rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
+              <span className="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
+              Let's Collaborate
+            </button>
+          </Link>
           <h5 className="w-10 h-10 rounded-full object-cover mt-2 font-bold text-xl flex items-center justify-center">
             <img
               onMouseEnter={() => setMyLogo(true)}
