@@ -14,7 +14,7 @@ import { TbMinusVertical } from "react-icons/tb";
 const LetsCollaborate = () => {
   const [reviewUser] = useState([
     {
-      img: "https://i.pinimg.com/736x/e2/92/d4/e292d40d8adedec48521b9602dc89734.jpg",
+      img: "/mayank-pareek.png",
       name: "Mayank Pareek",
       title: "3D Artist",
       linkedIn: "",
