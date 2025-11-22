@@ -675,6 +675,7 @@ I include milestone review points and feedback rounds to ensure we align on desi
               <p>Back</p>
             </button>
             <button
+              disabled={isSubmitting}
               onClick={() =>
                 setFormCounter((prev) => (prev < 4 ? prev + 1 : prev))
               }
