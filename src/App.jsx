@@ -2,10 +2,9 @@ import { Route, Routes } from "react-router-dom";
 import CenterPage from "./components/CenterPage";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import SideBar from "./components/SideBar";
+// import SideBar from "./components/SideBar";
 import Contact from "./router/Contact";
 import LetsCollaborate from "./router/LetsCollaborate";
-import RHF from "./router/RHF";
 
 const App = () => {
   return (
