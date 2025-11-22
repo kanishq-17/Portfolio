@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
@@ -8,25 +8,30 @@ import { IoReturnDownBack } from "react-icons/io5";
 import { IoReturnDownForward } from "react-icons/io5";
 import { CiSaveUp2 } from "react-icons/ci";
 
+import { TbMinus } from "react-icons/tb";
+import { TbMinusVertical } from "react-icons/tb";
+
 const LetsCollaborate = () => {
   const [reviewUser] = useState([
     {
-      img: "",
+      img: "https://i.pinimg.com/736x/e2/92/d4/e292d40d8adedec48521b9602dc89734.jpg",
       name: "Mayank Pareek",
       title: "3D Artist",
       linkedIn: "",
       description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore, saepe!",
-      comments: "",
+        "Creative 3D artist skilled in Blender, modeling, rendering, and visual storytelling.",
+      comments:
+        "Kanishq built a complete full-stack car model website for my 3D assets. The UI was clean, the workflow smooth, and he understood every requirement perfectly. Working with him was effortless — truly reliable and fast.",
     },
     {
-      img: "",
+      img: "https://i.pinimg.com/736x/6c/96/ee/6c96ee377b4ae931333ea76b969891be.jpg",
       name: "Vinit Modi",
       title: "Business Analyst",
       linkedIn: "https://www.linkedin.com/in/vinit-modi-22a458222",
       description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore, saepe!",
-      comments: "",
+        "Business analyst with strong problem-solving skills and Red Hat certification expertise.",
+      comments:
+        "We collaborated on the MERN project ‘Rasoi Se’. Kanishq handled the frontend and interactions brilliantly. His attention to detail, pixel-perfect components, and debugging skills elevated the entire project.",
     },
     {
       img: "/rajat-sen.png",
@@ -34,8 +39,9 @@ const LetsCollaborate = () => {
       title: "Full Stack Dev",
       linkedIn: "https://www.linkedin.com/in/rajatsen13",
       description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore, saepe!",
-      comments: "",
+        "Full-stack developer with high logical thinking and strong application-building skills.",
+      comments:
+        "We teamed up during a hackathon where Kanishq built an impressive UI flow and frontend architecture. His quick thinking, adaptability, and design sense helped us ship a solid product under pressure.",
     },
     {
       img: "/anupam-mishra.png",
@@ -43,9 +49,19 @@ const LetsCollaborate = () => {
       title: "Data Engineer",
       linkedIn: "https://www.linkedin.com/in/anupam--mishra",
       description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore, saepe!",
+        "Data engineer at PwC with expertise in analytics and scalable data solutions.",
       comments:
-        "It doesn’t matter the size; we build everything from single-page landings to enterprise-level migrations of 1000+ pages and anything in between.",
+        "Kanishq created a polished frontend for my startup DataSquare. The animations, GSAP work, and modern UI elevated the brand identity. His communication and delivery speed were excellent throughout.",
+    },
+    {
+      img: "/ritik-1.png",
+      name: "Ritik Raj Singh",
+      title: "Front End Dev",
+      linkedIn: "https://www.linkedin.com/in/ritik-raj-singh-92b018301",
+      description:
+        "Frontend developer with strong React skills and exploring full-stack development.",
+      comments:
+        "We’ve worked together on a full-stack LMS frontend and continue to collaborate. Kanishq’s structure, component design, and UI logic are consistently high-quality. He’s someone you can rely on for clean and efficient code.",
     },
   ]);
 
@@ -73,6 +89,64 @@ const LetsCollaborate = () => {
     },
   ]);
 
+  const [qna, setQna] = useState([
+    {
+      id: 0,
+      question: "What type of clients do you work with?",
+      answer: `I work with startups, small-to-medium businesses, founders, product teams, and creators who need clear, modern web interfaces — everything from marketing sites and landing pages to dashboards and internal tools. I also collaborate with agencies and technical leads who need a reliable frontend partner.`,
+      isOpen: true,
+    },
+    {
+      id: 1,
+      question: "How big does my project need to be?",
+      answer: `There’s no minimum size — I take projects ranging from single-page landing pages to multi-screen dashboards and full product builds. If it’s well-defined (even small), I’ll give a realistic plan; if the scope is loose, we’ll scope it together in a short discovery call.`,
+      isOpen: false,
+    },
+    {
+      id: 2,
+      question: "How much does a website cost?",
+      answer: `Costs depend on scope and complexity. As a rough guideline (INR):
+
+Small landing page: ₹8k–₹25k
+
+Multi-page brochure site: ₹25k–₹75k
+
+Complex Webflow site with CMS and interactions: ₹75k+
+If you prefer React/Tailwind instead of Webflow, budgets shift depending on integrations and backend needs — I’ll give a tailored estimate after a quick brief.`,
+      isOpen: false,
+    },
+    {
+      id: 3,
+      question: "How much time does it take to create a website?",
+      answer: `Typical timelines:
+
+Small landing page: 2–7 days
+
+Multi-page site (5–10 pages): 1–3 weeks
+
+Complex site with CMS & interactions: 3–6 weeks
+Timelines depend on approvals, assets (copy/design), and integrations. I share a clear schedule during scoping and give milestone delivery dates so you know what to expect.`,
+      isOpen: false,
+    },
+    {
+      id: 4,
+      question: "Can you work with my existing team?",
+      answer: `Absolutely.
+I can collaborate with designers, backend developers, product managers, or founders — in async or real-time communication.`,
+      isOpen: false,
+    },
+    {
+      id: 5,
+      question: "Do you offer revisions?",
+      answer: `Yes.
+I include milestone review points and feedback rounds to ensure we align on design, functionality and overall experience.`,
+      isOpen: false,
+    },
+  ]);
+
+  const [formCounter, setFormCounter] = useState(0);
+  const [reviewCounter, setReviewCounter] = useState(0);
+
   const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
       fullname: "",
@@ -99,21 +173,31 @@ const LetsCollaborate = () => {
     reset();
   };
 
-  const [formCounter, setFormCounter] = useState(0);
-  const [reviewCounter, setReviewCounter] = useState(3);
-
   console.log(formCounter);
 
+  useEffect(() => {
+    let interval = setInterval(() => {
+      setReviewCounter((prev) => (prev + 1) % reviewUser.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const showQna = (id) => {
+    setQna((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, isOpen: !item.isOpen }
+          : { ...item, isOpen: false }
+      )
+    );
+  };
+
   return (
-    <div
-      className="w-full bg-custom-gradient p-10"
-      style={{
-        backgroundImage: `linear-gradient(70deg, hsl(330deg 91% 9%) 0%, hsl(341deg 91% 18%) 39%, hsl(353deg 81% 26%) 69%, hsl(347deg 83% 30%) 85%, hsl(333deg 84% 34%) 94%, hsl(2deg 18% 63%) 100%)`,
-      }}
-    >
+    <div className="w-full bg-linear-to-br from-[#fff8ef] to-[#f5eaff] p-10">
       <div className="pt-18">
-        <h1 className="font-bold text-white text-8xl">
-          <span className="italic">Have Design Project</span> <br />
+        <h1 className="font-bold text-black text-8xl">
+          <span className="">Have Design Project</span> <br />
           <span className="text-7xl">and need help?</span>
         </h1>
         <hr className="text-gray-300 mt-10" />
@@ -156,135 +240,84 @@ const LetsCollaborate = () => {
             </div>
             {/* //* reviews */}
             <div className="reviews w-full h-82 flex ">
-              <p className="font-light text-xl pt-40 text-white">
+              <p className="font-light text-xl pt-40 text-black">
                 {reviewUser[reviewCounter].comments}
               </p>
             </div>
           </div>
           {/* //? qna section */}
-          <div className="qna section w-full mt-14 text-white">
-            {/* //? question 1 */}
-            <div>
-              <div className="flex items-center justify-between cursor-pointer">
-                <h4 className="font-semibold text-xl">
-                  How big does my project need to be
-                </h4>
-                <span>
-                  <BsPlusLg className="text-3xl" />
-                </span>
+          <div className="qna section w-full mt-14 text-black">
+            {qna.map((qa) => (
+              <div key={qa.id}>
+                <div
+                  onClick={() => showQna(qa.id)}
+                  aria-expanded={qa.isOpen}
+                  className="flex items-center justify-between cursor-pointer y"
+                >
+                  <h4 className="font-semibold text-xl">{qa.question}</h4>
+                  <div className="text-4xl relative">
+                    <span>
+                      <TbMinus />
+                    </span>
+                    <span
+                      className={`absolute top-0 transition-all duration-300 ${
+                        qa.isOpen ? "-rotate-90" : "rotate-0"
+                      }`}
+                    >
+                      <TbMinusVertical />
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className={`mt-4 text-lg font-light transition-all duration-300 ${
+                    qa.isOpen
+                      ? "opacity-100 max-h-96"
+                      : "opacity-0 max-h-0 overflow-hidden"
+                  }`}
+                >
+                  <p>{qa.answer}</p>
+                </div>
+                <hr className="my-4" />
               </div>
-              {/* <p className="my-5 font-light text-lg">
-                It doesn’t matter the size; we build everything from single-page
-                landings to enterprise-level migrations of 1000+ pages and
-                anything in between.
-              </p> */}
-            </div>
-            <hr className="my-4" />
-            {/* //? question 2 */}
-            <div>
-              <div className="flex items-center justify-between cursor-pointer">
-                <h4 className="font-semibold text-xl">
-                  How big does my project need to be
-                </h4>
-                <span>
-                  <BsPlusLg className="text-3xl" />
-                </span>
-              </div>
-              {/* <p className="my-5 font-light text-lg">
-                It doesn’t matter the size; we build everything from single-page
-                landings to enterprise-level migrations of 1000+ pages and
-                anything in between.
-              </p> */}
-            </div>
-            <hr className="my-4" />
-            {/* //? question 3 */}
-            <div>
-              <div className="flex items-center justify-between cursor-pointer">
-                <h4 className="font-semibold text-xl">
-                  How big does my project need to be
-                </h4>
-                <span>
-                  <BsPlusLg className="text-3xl" />
-                </span>
-              </div>
-              {/* <p className="my-5 font-light text-lg">
-                It doesn’t matter the size; we build everything from single-page
-                landings to enterprise-level migrations of 1000+ pages and
-                anything in between.
-              </p> */}
-            </div>
-            <hr className="my-4" />
-            {/* //? question 4 */}
-            <div>
-              <div className="flex items-center justify-between cursor-pointer">
-                <h4 className="font-semibold text-xl">
-                  How big does my project need to be
-                </h4>
-                <span>
-                  <BsPlusLg className="text-3xl" />
-                </span>
-              </div>
-              {/* <p className="my-5 font-light text-lg">
-                It doesn’t matter the size; we build everything from single-page
-                landings to enterprise-level migrations of 1000+ pages and
-                anything in between.
-              </p> */}
-            </div>
-            <hr className="my-4" />
-            {/* //? question 5 */}
-            <div>
-              <div className="flex items-center justify-between cursor-pointer">
-                <h4 className="font-semibold text-xl">
-                  How big does my project need to be
-                </h4>
-                <span>
-                  <BsPlusLg className="text-3xl" />
-                </span>
-              </div>
-              {/* <p className="my-5 font-light text-lg">
-                It doesn’t matter the size; we build everything from single-page
-                landings to enterprise-level migrations of 1000+ pages and
-                anything in between.
-              </p> */}
-            </div>
+            ))}
           </div>
         </div>
         {/* //! contact section */}
-        <div className="w-[40%] bg-pink-200/50 border border-white/50 backdrop-blur-lg shadow-lg rounded-md h-134 p-5 relative">
+        <div className="w-[40%] bg-pink-50/50 border border-white/50 backdrop-blur-lg shadow-lg rounded-md h-134 p-5 relative">
           <div className="w-full flex justify-center items-center gap-3 my-5 mb-12">
             <div
               className={`rounded-full w-6 h-1 ${
                 formCounter === 0
                   ? "bg-white shadow shadow-gray-600/30"
-                  : "bg-neutral-400"
+                  : "bg-neutral-400/30"
               }`}
             ></div>
             <div
               className={`rounded-full w-6 h-1 ${
                 formCounter === 1
                   ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400"
+                  : "bg-neutral-400/30"
               }`}
             ></div>
             <div
               className={`rounded-full w-6 h-1 ${
                 formCounter === 2
                   ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400"
+                  : "bg-neutral-400/30"
               }`}
             ></div>
             <div
               className={`rounded-full w-6 h-1 ${
                 formCounter === 3
                   ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400"
+                  : "bg-neutral-400/30"
               }`}
             ></div>
             <div
               className={`rounded-full w-6 h-1 ${
                 formCounter === 4
                   ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400"
+                  : "bg-neutral-400/30"
               }`}
             ></div>
           </div>

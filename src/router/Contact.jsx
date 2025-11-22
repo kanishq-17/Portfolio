@@ -151,7 +151,9 @@ export default function Contact() {
   return (
     <div className="w-full bg-[#f8edeb] p-10">
       <div className="pt-18">
-        <h1 className="font-bold text-8xl">It's Time To Work Together</h1>
+        <h1 className="font-bold text-8xl" id="contact-heading">
+          It's Time To Work Together
+        </h1>
         <p className="font-medium mt-5 text-3xl">
           Let’s Create Something That Matters..{" "}
         </p>
@@ -226,7 +228,7 @@ export default function Contact() {
           <form noValidate>
             <div className="flex justify-between items-center gap-5">
               <div className="w-1/2">
-                <label htmlFor="fullName" className="text-sm text-gray-500">
+                <label htmlFor="fullName" className="text-xs text-gray-500">
                   FULL NAME
                 </label>
                 <br />
@@ -243,7 +245,7 @@ export default function Contact() {
                 <hr className="" />
               </div>
               <div className="w-1/2">
-                <label htmlFor="company" className="text-sm text-gray-500">
+                <label htmlFor="company" className="text-xs text-gray-500">
                   COMPANY
                 </label>
                 <br />
@@ -258,7 +260,7 @@ export default function Contact() {
               </div>
             </div>
             <div className="my-5">
-              <label htmlFor="email" className="text-sm text-gray-500">
+              <label htmlFor="email" className="text-xs text-gray-500">
                 EMAIL
               </label>
               <br />
@@ -275,7 +277,7 @@ export default function Contact() {
               <hr />
             </div>
             <div>
-              <label htmlFor="message" className="text-sm text-gray-500">
+              <label htmlFor="message" className="text-xs text-gray-500">
                 MESSAGE
               </label>
               <br />

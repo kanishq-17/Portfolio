@@ -14,7 +14,7 @@ import { AiOutlineRobot } from "react-icons/ai"; // ai-lab-line
 
 const SideBar = () => {
   return (
-    <div className="sidebar bg-[#f8edeb] min-w-16 fixed h-screen  top-0  pt-4 text-black">
+    <div className="sidebar bg-[#f8edeb] min-w-16 absolute h-screen top-34  pt-4 text-black">
       {/* //! Primary links */}
       <div className="flex flex-col items-center justify-start gap-4">
         <div className="experiment w-8 h-8 bg-orange-600 rounded-lg font-bold px-1.5 text-lg flex items-center justify-center">

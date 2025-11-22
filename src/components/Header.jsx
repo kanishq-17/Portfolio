@@ -37,7 +37,25 @@ const Header = () => {
         {/* //* CTA Buttons */}
         <div className="call-to-actions flex gap-5 items-end relative">
           <Link to="/contact">
-            <button className="cursor-pointer contact-me-btn px-5 py-2 outline-1 rounded-md font-medium outline-gray-600">
+            <div
+              className="
+    px-4 py-[1.3rem] absolute rounded-md z-10 font-medium left-1 top-[.29rem] border-t border-b border-white 
+    bg-transparent w-24 h-9 
+    
+    shadow-[inset_0px_0px_30px_-10px_rgba(255,255,255,0.35)]
+    hover:shadow-[inset_0px_2px_0px_-2px_rgba(42,42,42,1)] 
+    
+  "
+            ></div>
+
+            <button
+              className="
+    cursor-pointer contact-me-btn px-5 py-2.5 outline-1 rounded-md font-medium outline-neutral-100/50 
+    backdrop-blur-2xl bg-pink-100/50 
+    relative z-0
+    shadow-[inset_0px_0px_30px_-14px_rgba(42,42,42,0.75)] 
+  "
+            >
               Contact
             </button>
           </Link>

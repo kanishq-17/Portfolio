@@ -1,4 +1,6 @@
 import { useState } from "react";
+import TextType from "./TextType";
+
 import { FcFlashOn } from "react-icons/fc";
 import { RiMic2Line } from "react-icons/ri";
 import { TbArrowNarrowUp } from "react-icons/tb";
@@ -151,7 +153,7 @@ const CenterPage = () => {
 
   const [prompts] = useState([
     [
-      "Website development prompts",
+      "Website development",
       {
         id: 1,
         prompt:
@@ -174,7 +176,7 @@ const CenterPage = () => {
       },
     ],
     [
-      "Dashboard interface prompts",
+      "Dashboard interface",
       {
         id: 1,
         prompt:
@@ -196,7 +198,7 @@ const CenterPage = () => {
       },
     ],
     [
-      "UI/UX engineering prompts",
+      "UI/UX engineering",
       {
         id: 1,
         prompt:
@@ -218,7 +220,7 @@ const CenterPage = () => {
       },
     ],
     [
-      "Automation & AI systems prompts",
+      "Automation & AI systems",
       {
         id: 1,
         prompt:
@@ -242,16 +244,42 @@ const CenterPage = () => {
     ],
   ]);
 
+  const [autoPrompts] = useState([
+    // Welcome
+    "✨ Welcome! Let’s build something meaningful.",
+
+    // Tech stack
+    "⚛️ React-crafted interfaces that feel effortless.",
+    "📜 JavaScript that actually behaves itself (mostly).",
+    "🔷 TypeScript for projects that need discipline.",
+
+    // Serious / result-focused
+    "⚡ Fast, reliable, production-ready builds.",
+    "🎯 Pixel-perfect execution with scalable architecture.",
+
+    // Percentage-based
+    "📈 A great UI can boost user trust by 70%.",
+    "🎛️ Micro-interactions enhance experience by 40%.",
+
+    // Serious / result-focused
+    "🚀 Performance-first frontend engineering.",
+    "🛡️ Robust systems designed to handle real users.",
+
+    // Tech stack
+    "🟢 Node.js APIs that respond instantly.",
+    "🧩 Express servers built with precision.",
+    "🍃 MongoDB that scales without complaining.",
+  ]);
+
   const [closeBtn, setCloseBtn] = useState(false);
 
   const [activeGroupPromptIndex, setActiveGroupPromptIndex] = useState(null);
 
   return (
     <div className="main-page w-full pb-10 bg-[#f4f1f1] text-black">
-      <SideBar />
       {/* //! input-box div */}
       <div className="mt-14">
-        <h1 className="font-bold text-center text-3xl z-0">
+        <h1 className="font-bold text-center text-3xl z-0 font-roboto">
           What would you like to build today?
         </h1>
         <div className="bg-neutral-50 w-210 h-42 m-auto mt-8 rounded-lg outline-1 outline-gray-300">
@@ -270,8 +298,14 @@ const CenterPage = () => {
 
           {/* //! input-box message */}
           <div>
-            <h4 className="px-5 text-neutral-600 mt-2">
-              Enter an idea or app name to get started
+            <h4 className="px-5 text-neutral-800 mt-2 text-xl">
+              <TextType
+                text={autoPrompts}
+                typingSpeed={75}
+                pauseDuration={1500}
+                showCursor={true}
+                cursorCharacter="|"
+              />
             </h4>
           </div>
 
@@ -428,7 +462,7 @@ const CenterPage = () => {
               onClick={() => setCtaBtnCounter(1)}
               className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
                 ctaBtnCounter === 1
-                  ? "border-blue-400 bg-blue-300/20 text-blue-300 shadow-inner"
+                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
                   : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
               }`}
             >
@@ -441,7 +475,7 @@ const CenterPage = () => {
               onClick={() => setCtaBtnCounter(2)}
               className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
                 ctaBtnCounter === 2
-                  ? "border-blue-400 bg-blue-300/20 text-blue-300 shadow-inner"
+                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
                   : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
               }`}
             >
@@ -454,7 +488,7 @@ const CenterPage = () => {
               onClick={() => setCtaBtnCounter(3)}
               className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
                 ctaBtnCounter === 3
-                  ? "border-blue-400 bg-blue-300/20 text-blue-300 shadow-inner"
+                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
                   : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
               }`}
             >
