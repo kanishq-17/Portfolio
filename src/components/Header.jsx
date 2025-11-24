@@ -24,9 +24,6 @@ const Header = () => {
       <div className="header h-[60%] bg-[#fcd5ce] px-5 flex justify-between items-center box-border text-black">
         {/* //* My-name & Title */}
         <div className="short-title flex gap-5 items-center">
-          <div className="text-3xl mt-9 text-gray-600">
-            <BsList />
-          </div>
           <div className="me">
             <h1 className="my-name font-bold text-3xl">Kanishq</h1>
             <h4 className="my-title font-extralight text-md">
@@ -59,7 +56,7 @@ const Header = () => {
               Contact
             </button>
           </Link>
-          <Link to="/lets-collaborate">
+          <Link to="/collaborate">
             <button className="cursor-pointer bg-red-950 text-red-400 border border-red-400 border-b-4 font-medium overflow-hidden relative px-4 py-2  rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
               <span className="bg-red-400 shadow-red-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
               Let's Collaborate
