@@ -18,7 +18,6 @@ import { GiJusticeStar } from "react-icons/gi";
 import { ImCool } from "react-icons/im";
 
 import { TbPlaylistAdd } from "react-icons/tb";
-import SideBar from "./SideBar";
 
 const CenterPage = () => {
   const [mic, setMic] = useState();
@@ -336,7 +335,7 @@ const CenterPage = () => {
         </div>
 
         {/* //! input-box links */}
-        <div className="mt-4 flex gap-3 items-center justify-center text-blue-800 font-medium relative ">
+        <div className="mt-4 flex gap-3 items-center justify-center text-blue-800 font-medium relative">
           {inputBoxLinks.map((box, index) => (
             <div
               key={box.id}
@@ -344,7 +343,7 @@ const CenterPage = () => {
                 setActiveGroupPromptIndex(index);
                 setCloseBtn(true);
               }}
-              className="input-box-links hover:bg-blue-200/20 px-1 py-2 rounded-sm flex items-center gap-3 cursor-pointer"
+              className="input-box-links hover:bg-blue-200/20 px-1 py-2 rounded-sm flex items-center gap-2 cursor-pointer text-sm"
             >
               <span>{box.icons}</span>
               <h5>{box.title}</h5>
