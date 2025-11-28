@@ -1,8 +1,18 @@
-import { useState } from "react";
+// ProjectPage.jsx
+import React, { useState } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectDetails from "./ProjectDetails";
+import { FaReact } from "react-icons/fa";
+
+/**
+ * Updated ProjectPage with placeholder in right column
+ * - Left: project cards (55%)
+ * - Right: project details OR placeholder (45%)
+ * - Preserves card & details sizes and logic
+ */
 
 const ProjectPage = () => {
+  // --- Projects data (unchanged content) ---
   const [reactProjects] = useState([
     {
       id: 0,
@@ -13,7 +23,7 @@ const ProjectPage = () => {
       projectSummary:
         "Lightweight, instant polling app for class and conference environments—create, vote, and see results in real-time.",
       role: "State Management",
-      contact: "",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
       preview: "",
       isLive: true,
@@ -23,7 +33,6 @@ const ProjectPage = () => {
       files: "10 Components",
       features: "3 Features",
       techStack: ["React", "GSAP", "Tailwindcss", "JavaScript", "Frontend"],
-
       detail1: [
         {
           heading: "Dynamic Options Engine",
@@ -50,7 +59,6 @@ const ProjectPage = () => {
         ],
       },
     },
-
     {
       id: 1,
       avatarUrl: "/avatarUrl/avatar2.png",
@@ -60,7 +68,7 @@ const ProjectPage = () => {
       projectSummary:
         "A collaborative community platform where developers share skills, knowledge, help each other solve coding challenges, suggest tools, request job/internship referrals, and receive guidance from seniors.",
       role: "Frontend Developer",
-      contact: "",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
       preview: "",
       isLive: true,
@@ -98,7 +106,6 @@ const ProjectPage = () => {
         ],
       },
     },
-
     {
       id: 2,
       avatarUrl: "/avatarUrl/avatar3.png",
@@ -106,8 +113,9 @@ const ProjectPage = () => {
       projectName: "HabitFlow",
       shortLine: "Build habits easily",
       projectSummary:
-        "Track habits, set goals, and visualise progress with streaks and weekly analytics.",
+        "Track habits, set goals, and visualize progress with streaks and weekly analytics.",
       role: "UI + Logic",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
       preview: "",
       isLive: false,
@@ -117,7 +125,6 @@ const ProjectPage = () => {
       files: "14 Components",
       features: "6 Features",
       techStack: ["React", "Tailwindcss", "JavaScript", "Frontend"],
-
       detail1: [
         {
           heading: "Streak Engine",
@@ -130,7 +137,6 @@ const ProjectPage = () => {
           percent: 30,
         },
       ],
-
       detail2: {
         heading: "Motivation-Driven UI",
         content: "Clean and energetic design to help maintain daily habits.",
@@ -155,6 +161,7 @@ const ProjectPage = () => {
       projectSummary:
         "A secure authentication API with JWT, refresh tokens, rate limits, and role-based access.",
       role: "Backend Developer",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
       preview: "",
       isLive: true,
@@ -164,7 +171,6 @@ const ProjectPage = () => {
       files: "8 Routes",
       features: "5 Features",
       techStack: ["Node", "Express", "MongoDB", "JWT"],
-
       detail1: [
         {
           heading: "Token Security",
@@ -191,7 +197,6 @@ const ProjectPage = () => {
         ],
       },
     },
-
     {
       id: 1,
       avatarUrl: "/avatarUrl/avatar5.png",
@@ -201,7 +206,9 @@ const ProjectPage = () => {
       projectSummary:
         "A task management backend supporting teams, roles, activity logs, and due-date tracking.",
       role: "Backend Developer",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
+      preview: "",
       isLive: true,
       projectType: "Backend API",
       techStackSummary: "Node.js + Express + MongoDB",
@@ -209,7 +216,6 @@ const ProjectPage = () => {
       files: "9 Routes",
       features: "6 Features",
       techStack: ["Node", "Express", "MongoDB"],
-
       detail1: [
         {
           heading: "Team Roles",
@@ -224,9 +230,8 @@ const ProjectPage = () => {
           percent: 30,
         },
       ],
-
       detail2: {
-        heading: "Organised & Scalable",
+        heading: "Organized & Scalable",
         content:
           "API designed with clean separation of concerns and reusable controllers.",
         percent: 25,
@@ -238,7 +243,6 @@ const ProjectPage = () => {
         ],
       },
     },
-
     {
       id: 2,
       avatarUrl: "/avatarUrl/avatar6.png",
@@ -248,7 +252,9 @@ const ProjectPage = () => {
       projectSummary:
         "A full shopping-cart backend including product caching, wishlist, and cart computations.",
       role: "Backend Developer",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
+      preview: "",
       isLive: false,
       projectType: "Backend API",
       techStackSummary: "Node.js + Express + MongoDB",
@@ -256,7 +262,6 @@ const ProjectPage = () => {
       files: "10 Routes",
       features: "7 Features",
       techStack: ["Node", "Express", "MongoDB"],
-
       detail1: [
         {
           heading: "Smart Cart Engine",
@@ -271,11 +276,10 @@ const ProjectPage = () => {
           percent: 20,
         },
       ],
-
       detail2: {
-        heading: "Optimised for Performance",
+        heading: "Optimized for Performance",
         content:
-          "Minimises database calls for faster page loads and checkout flows.",
+          "Minimizes database calls for faster page loads and checkout flows.",
         percent: 20,
         steps: [
           "Caching layer",
@@ -297,7 +301,9 @@ const ProjectPage = () => {
       projectSummary:
         "A fast, SEO-friendly MDX blogging system with dark mode, tags, and recommendation engine.",
       role: "Full Stack",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
+      preview: "",
       isLive: false,
       projectType: "Next.js App",
       techStackSummary: "Next.js + MDX + Tailwind",
@@ -305,7 +311,6 @@ const ProjectPage = () => {
       files: "15 Components",
       features: "6 Features",
       techStack: ["Next.js", "Tailwindcss", "React"],
-
       detail1: [
         {
           heading: "MDX Engine",
@@ -320,7 +325,6 @@ const ProjectPage = () => {
           percent: 30,
         },
       ],
-
       detail2: {
         heading: "Smooth & Modern UX",
         content: "Fast navigation, clean typography, and reading-light modes.",
@@ -328,7 +332,6 @@ const ProjectPage = () => {
         steps: ["MDX setup", "Tag filter", "SEO metadata", "Theme switcher"],
       },
     },
-
     {
       id: 1,
       avatarUrl: "/avatarUrl/avatar8.png",
@@ -338,7 +341,9 @@ const ProjectPage = () => {
       projectSummary:
         "A personalized dashboard to track GitHub stats, coding streaks, and pinned projects.",
       role: "Full Stack",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
+      preview: "",
       isLive: false,
       projectType: "Next.js App",
       techStackSummary: "Next.js + Tailwind + GitHub API",
@@ -346,7 +351,6 @@ const ProjectPage = () => {
       files: "18 Components",
       features: "7 Features",
       techStack: ["Next.js", "React", "Tailwindcss"],
-
       detail1: [
         {
           heading: "GitHub Integration",
@@ -361,7 +365,6 @@ const ProjectPage = () => {
           percent: 25,
         },
       ],
-
       detail2: {
         heading: "Developer Productivity Suite",
         content:
@@ -375,7 +378,6 @@ const ProjectPage = () => {
         ],
       },
     },
-
     {
       id: 2,
       avatarUrl: "/avatarUrl/avatar9.png",
@@ -385,7 +387,9 @@ const ProjectPage = () => {
       projectSummary:
         "A course discovery and learning dashboard with categories, progress tracking, and playlists.",
       role: "Frontend + API",
+      contact: "/contact",
       github: "https://github.com/kanishq-17",
+      preview: "",
       isLive: false,
       projectType: "Next.js App",
       techStackSummary: "Next.js + Tailwind + Prisma",
@@ -393,7 +397,6 @@ const ProjectPage = () => {
       files: "13 Components",
       features: "5 Features",
       techStack: ["Next.js", "Tailwindcss", "React"],
-
       detail1: [
         {
           heading: "Dynamic Course Lists",
@@ -406,7 +409,6 @@ const ProjectPage = () => {
           percent: 30,
         },
       ],
-
       detail2: {
         heading: "Smooth Classroom UI",
         content: "Clean layout for browsing lessons and continuing learning.",
@@ -421,6 +423,7 @@ const ProjectPage = () => {
     },
   ]);
 
+  // 0 = all (unused), 1 = react, 2 = node, 3 = next
   const [projectTracker, setProjectTracker] = useState(1);
 
   function changeProjectIndex(value) {
@@ -431,59 +434,56 @@ const ProjectPage = () => {
 
   const openProject = (projectObj) => {
     setSelectedProject({ ...projectObj, _uid: Date.now() });
-
+    // scroll details into view if present
     document
       .getElementById("project-details")
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const closeProject = () => selectedProject(null);
+  const closeProject = () => setSelectedProject(null);
+
+  // derive current list
+  // const currentList =
+  projectTracker === 1
+    ? reactProjects
+    : projectTracker === 2
+    ? nodeProjects
+    : nextProjects;
 
   return (
-    <div className="w-full bg-neutral-100/50 p-4">
-      <h1 className="font-bold text-7xl">Meet some of my works</h1>
+    <div className="w-full bg-neutral-100/50 px-8 py-16">
+      {/* MAIN HEADING */}
+      <h1 className="font-extrabold text-6xl sm:text-5xl tracking-tight text-slate-900 mb-10">
+        Meet some of my works
+      </h1>
 
-      {/* //? Project Filter */}
-      <div className="project-filter flex w-full items-center justify-start gap-3 text-white font-medium text-sm mt-12">
-        {/* //? React Btn */}
-        <div className="cursor-pointer">
-          <div className="absolute px-8 py-5 bg-linear-to-l from-[#f4313e] to-[#EFE6DE]  rounded-lg"></div>
-          <button
-            onClick={() => changeProjectIndex(1)}
-            className="px-4 py-2 border border-white/50 rounded-lg backdrop-blur-xs  bg-transparent relative cursor-pointer"
-          >
-            React
-          </button>
-        </div>
-
-        {/* //? Node Btn */}
-        <div className="cursor-pointer">
-          <div className="absolute px-8 py-5 bg-linear-to-l from-[#003c39] to-[#f0ede5]  rounded-lg"></div>
-          <button
-            onClick={() => changeProjectIndex(2)}
-            className="px-4 py-2 border border-white/50 rounded-lg backdrop-blur-xs  bg-transparent relative cursor-pointer"
-          >
-            Node
-          </button>
-        </div>
-
-        {/* //? Next Btn */}
-        <div className="cursor-pointer">
-          <div className="absolute px-7 py-5 bg-linear-to-l from-[#212482] to-[#EFE6DE]  rounded-lg"></div>
-          <button
-            onClick={() => changeProjectIndex(3)}
-            className="px-4 py-2 border border-white/50 rounded-lg backdrop-blur-xs  bg-transparent relative cursor-pointer"
-          >
-            Next
-          </button>
-        </div>
+      {/* FILTER TABS */}
+      <div className="flex items-center gap-4 mb-10">
+        <TabButton
+          label="React"
+          active={projectTracker === 1}
+          onClick={() => changeProjectIndex(1)}
+          accent="from-[#61dafb] to-[#7c3aed] cursor-pointer"
+        />
+        <TabButton
+          label="Node"
+          active={projectTracker === 2}
+          onClick={() => changeProjectIndex(2)}
+          accent="from-[#34d399] to-[#059669] cursor-pointer"
+        />
+        <TabButton
+          label="Next"
+          active={projectTracker === 3}
+          onClick={() => changeProjectIndex(3)}
+          accent="from-[#fb7185] to-[#FF8C00] cursor-pointer"
+        />
       </div>
-      {/* //! PROJECT SECTION */}
-      <div className="project-section flex items-start gap-5 my-10">
-        {/* //! PROJECT SELECTION */}
+
+      {/* PROJECT SECTION */}
+      <div className="project-section flex items-start mt-12">
+        {/* PROJECT SELECTION LEFT SIDE (UNCHANGED SIZE) */}
         <div className="project-selection w-[55%]">
-          {/* //? Project Small Cards */}
-          <div className="flex flex-wrap items-center justify-start">
+          <div className="flex flex-wrap items-start justify-start gap-6">
             <ProjectCard
               reactProjects={reactProjects}
               nodeProjects={nodeProjects}
@@ -494,16 +494,62 @@ const ProjectPage = () => {
           </div>
         </div>
 
-        {/* //! PROJECT INFORMATION */}
-        <div className="project-information w-[45%]">
-          <ProjectDetails
-            project={selectedProject}
-            onCloseProject={closeProject}
-          />
+        {/* PROJECT DETAILS RIGHT SIDE (UNCHANGED SIZE) */}
+        <div className="project-information w-[45%] sticky top-10">
+          {/* If no project selected → show placeholder */}
+          {!selectedProject && (
+            <div className="w-full h-[420px] bg-white/70 backdrop-blur-md rounded-2xl border border-slate-200/60 shadow-md flex flex-col items-center justify-center text-center p-8 animate-fadeIn">
+              <div className="p-4 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 text-white shadow-md mb-5">
+                <FaReact className="w-10 h-10" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                Select a project to view details
+              </h2>
+
+              <p className="text-sm text-slate-500 mt-3 max-w-xs">
+                Click on any card from the left to explore features, stack, and
+                progress.
+              </p>
+            </div>
+          )}
+
+          {/* When project exists → show real details */}
+          {selectedProject && (
+            <ProjectDetails
+              project={selectedProject}
+              onCloseProject={closeProject}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+/* ----- Small local components for UI polish ----- */
+function TabButton({
+  label,
+  onClick,
+  active = false,
+  accent = "from-indigo-400 to-indigo-600",
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative px-4 py-2 rounded-full text-sm font-medium transition focus:outline-none ${
+        active
+          ? `bg-linear-to-r ${accent} text-white shadow-md`
+          : "bg-white/60 text-slate-700 hover:bg-white/80"
+      }`}
+      aria-pressed={active}
+    >
+      {label}
+      {active && (
+        <span className="ml-2 inline-block w-2 h-2 bg-white rounded-full shadow-sm" />
+      )}
+    </button>
+  );
+}
 
 export default ProjectPage;
