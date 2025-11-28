@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
-    <div className="w-full text-center p-5 h-22 bg-white">
-      <h5>© 2025 Kanishq ⚡ Designed & Developed by ❤️</h5>
+    <div className="w-full text-center p-5  bg-white">
+      <h5>© 2025 Developed by Kanishq ❤️</h5>
     </div>
   );
 };
