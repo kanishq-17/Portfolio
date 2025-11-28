@@ -72,7 +72,8 @@ const LetsCollaborate = () => {
     },
     {
       heading: "Requirements & Preferences",
-      title: "Toggle options to share how you'd like this collaboration to work.",
+      title:
+        "Toggle options to share how you'd like this collaboration to work.",
     },
     {
       heading: "Final Notes",
@@ -164,7 +165,9 @@ const LetsCollaborate = () => {
   const showQna = (id) => {
     setQna((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, isOpen: !item.isOpen } : { ...item, isOpen: false }
+        item.id === id
+          ? { ...item, isOpen: !item.isOpen }
+          : { ...item, isOpen: false }
       )
     );
   };
@@ -259,7 +262,9 @@ const LetsCollaborate = () => {
         <div
           className={cx(
             "fixed right-6 top-6 z-50 px-4 py-2 rounded-md shadow-lg",
-            toast.type === "success" ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+            toast.type === "success"
+              ? "bg-emerald-600 text-white"
+              : "bg-rose-500 text-white"
           )}
         >
           {toast.text}
@@ -273,8 +278,9 @@ const LetsCollaborate = () => {
             Have a design project <br /> and need help?
           </h1>
           <p className="mt-4 text-slate-700 max-w-2xl">
-            Fill a quick brief — I’ll review and respond with a plan & estimate. You can
-            also email directly at <strong>try.kanishq@gmail.com</strong>.
+            Fill a quick brief — I’ll review and respond with a plan & estimate.
+            You can also email directly at{" "}
+            <strong>try.kanishq@gmail.com</strong>.
           </p>
         </div>
 
@@ -284,25 +290,40 @@ const LetsCollaborate = () => {
             {/* Review card */}
             <div className="flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-md p-5 border border-slate-100">
               <div className="w-full md:w-56 h-44 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
-                <img src={reviewUser[reviewCounter].img} alt="" className="w-full h-full object-cover" />
+                <img
+                  src={reviewUser[reviewCounter].img}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-xl font-semibold">{reviewUser[reviewCounter].name}</h3>
-                    <p className="text-sm text-slate-600">{reviewUser[reviewCounter].title}</p>
+                    <h3 className="text-xl font-semibold">
+                      {reviewUser[reviewCounter].name}
+                    </h3>
+                    <p className="text-sm text-slate-600">
+                      {reviewUser[reviewCounter].title}
+                    </p>
                   </div>
                   <div>
                     {reviewUser[reviewCounter].linkedIn && (
-                      <Link to={reviewUser[reviewCounter].linkedIn} target="_blank" rel="noreferrer" className="text-slate-700 hover:text-indigo-600">
+                      <Link
+                        to={reviewUser[reviewCounter].linkedIn}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-700 hover:text-indigo-600"
+                      >
                         <FaLinkedinIn />
                       </Link>
                     )}
                   </div>
                 </div>
 
-                <p className="mt-4 text-slate-700">{reviewUser[reviewCounter].comments}</p>
+                <p className="mt-4 text-slate-700">
+                  {reviewUser[reviewCounter].comments}
+                </p>
               </div>
             </div>
 
@@ -321,7 +342,13 @@ const LetsCollaborate = () => {
                         <h5 className="font-medium text-base">{qa.question}</h5>
                       </div>
                       <div className="text-2xl">
-                        <span className={`${qa.isOpen ? "-rotate-90" : "rotate-0"} transition-transform`}>⮟</span>
+                        <span
+                          className={`${
+                            qa.isOpen ? "-rotate-90" : "rotate-0"
+                          } transition-transform`}
+                        >
+                          ⮟
+                        </span>
                       </div>
                     </button>
 
@@ -353,14 +380,21 @@ const LetsCollaborate = () => {
                         <div
                           className={cx(
                             "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                            formCounter === p ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-700"
+                            formCounter === p
+                              ? "bg-indigo-600 text-white"
+                              : "bg-slate-200 text-slate-700"
                           )}
                         >
                           {p + 1}
                         </div>
                         {/* small connecting line except last */}
                         {p < progressItems.length - 1 && (
-                          <div className={cx("w-6 h-0.5", formCounter > p ? "bg-indigo-600" : "bg-slate-200")} />
+                          <div
+                            className={cx(
+                              "w-6 h-0.5",
+                              formCounter > p ? "bg-indigo-600" : "bg-slate-200"
+                            )}
+                          />
                         )}
                       </div>
                     ))}
@@ -372,30 +406,48 @@ const LetsCollaborate = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-semibold">{formHeading[formCounter].heading}</h2>
-                  <p className="text-sm text-slate-600 mt-1">{formHeading[formCounter].title}</p>
+                  <h2 className="text-xl font-semibold">
+                    {formHeading[formCounter].heading}
+                  </h2>
+                  <p className="text-sm text-slate-600 mt-1">
+                    {formHeading[formCounter].title}
+                  </p>
                 </div>
 
                 <div className="mt-5">
                   {/* FORM - single react-hook-form instance */}
                   {/* Add onKeyDown to prevent Enter submitting early */}
-                  <form onSubmit={handleSubmit(submitForm)} onKeyDown={onFormKeyDown} noValidate>
+                  <form
+                    onSubmit={handleSubmit(submitForm)}
+                    onKeyDown={onFormKeyDown}
+                    noValidate
+                  >
                     {/* Step 0: Basic Info */}
                     {formCounter === 0 && (
                       <div className="space-y-4">
                         <div>
-                          <label className="text-xs font-medium">Full name *</label>
+                          <label className="text-xs font-medium">
+                            Full name *
+                          </label>
                           <input
-                            {...register("fullname", { required: "Full name is required" })}
+                            {...register("fullname", {
+                              required: "Full name is required",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             placeholder="Kanishq Sodhani"
                             type="text"
                           />
-                          {errors.fullname && <p className="text-rose-500 text-sm mt-1">{errors.fullname.message}</p>}
+                          {errors.fullname && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.fullname.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Company / Brand</label>
+                          <label className="text-xs font-medium">
+                            Company / Brand
+                          </label>
                           <input
                             {...register("company")}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
@@ -405,28 +457,45 @@ const LetsCollaborate = () => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Email address *</label>
+                          <label className="text-xs font-medium">
+                            Email address *
+                          </label>
                           <input
                             {...register("email", {
                               required: "Email is required",
-                              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
+                              pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: "Invalid email",
+                              },
                             })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             placeholder="you@company.com"
                             type="email"
                           />
-                          {errors.email && <p className="text-rose-500 text-sm mt-1">{errors.email.message}</p>}
+                          {errors.email && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.email.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Project title *</label>
+                          <label className="text-xs font-medium">
+                            Project title *
+                          </label>
                           <input
-                            {...register("projectTitle", { required: "Project title is required" })}
+                            {...register("projectTitle", {
+                              required: "Project title is required",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             placeholder="Name your project"
                             type="text"
                           />
-                          {errors.projectTitle && <p className="text-rose-500 text-sm mt-1">{errors.projectTitle.message}</p>}
+                          {errors.projectTitle && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.projectTitle.message}
+                            </p>
+                          )}
                         </div>
                       </div>
                     )}
@@ -435,18 +504,28 @@ const LetsCollaborate = () => {
                     {formCounter === 1 && (
                       <div className="space-y-4">
                         <div>
-                          <label className="text-xs font-medium">What are you building? *</label>
+                          <label className="text-xs font-medium">
+                            What are you building? *
+                          </label>
                           <input
-                            {...register("building", { required: "This is required" })}
+                            {...register("building", {
+                              required: "This is required",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             placeholder="Landing page, Dashboard, App UI..."
                             type="text"
                           />
-                          {errors.building && <p className="text-rose-500 text-sm mt-1">{errors.building.message}</p>}
+                          {errors.building && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.building.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">What problem will it solve?</label>
+                          <label className="text-xs font-medium">
+                            What problem will it solve?
+                          </label>
                           <input
                             {...register("problemSolve")}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
@@ -456,7 +535,9 @@ const LetsCollaborate = () => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Reference / Inspiration (link)</label>
+                          <label className="text-xs font-medium">
+                            Reference / Inspiration (link)
+                          </label>
                           <input
                             {...register("inspirationLink")}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
@@ -471,9 +552,13 @@ const LetsCollaborate = () => {
                     {formCounter === 2 && (
                       <div className="space-y-4">
                         <div>
-                          <label className="text-xs font-medium">Project type *</label>
+                          <label className="text-xs font-medium">
+                            Project type *
+                          </label>
                           <select
-                            {...register("projectType", { required: "Select project type" })}
+                            {...register("projectType", {
+                              required: "Select project type",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             defaultValue=""
                           >
@@ -481,19 +566,33 @@ const LetsCollaborate = () => {
                               Select project type
                             </option>
                             <option value="Website">Website</option>
-                            <option value="Dashboard Interface">Dashboard Interface</option>
+                            <option value="Dashboard Interface">
+                              Dashboard Interface
+                            </option>
                             <option value="UI/UX Design">UI/UX Design</option>
                             <option value="Web App">Web App</option>
-                            <option value="Automation / AI Tool">Automation / AI Tool</option>
-                            <option value="Something Else">Something Else</option>
+                            <option value="Automation / AI Tool">
+                              Automation / AI Tool
+                            </option>
+                            <option value="Something Else">
+                              Something Else
+                            </option>
                           </select>
-                          {errors.projectType && <p className="text-rose-500 text-sm mt-1">{errors.projectType.message}</p>}
+                          {errors.projectType && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.projectType.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Budget range *</label>
+                          <label className="text-xs font-medium">
+                            Budget range *
+                          </label>
                           <select
-                            {...register("budgetRange", { required: "Select budget range" })}
+                            {...register("budgetRange", {
+                              required: "Select budget range",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             defaultValue=""
                           >
@@ -501,18 +600,30 @@ const LetsCollaborate = () => {
                               Select budget range
                             </option>
                             <option value="Under ₹10,000">Under ₹10,000</option>
-                            <option value="₹10,000 – ₹25,000">₹10,000 – ₹25,000</option>
-                            <option value="₹25,000 – ₹75,000">₹25,000 – ₹75,000</option>
+                            <option value="₹10,000 – ₹25,000">
+                              ₹10,000 – ₹25,000
+                            </option>
+                            <option value="₹25,000 – ₹75,000">
+                              ₹25,000 – ₹75,000
+                            </option>
                             <option value="₹75,000+">₹75,000+</option>
                             <option value="Not sure yet">Not sure yet</option>
                           </select>
-                          {errors.budgetRange && <p className="text-rose-500 text-sm mt-1">{errors.budgetRange.message}</p>}
+                          {errors.budgetRange && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.budgetRange.message}
+                            </p>
+                          )}
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium">Timeline *</label>
+                          <label className="text-xs font-medium">
+                            Timeline *
+                          </label>
                           <select
-                            {...register("timeline", { required: "Select timeline" })}
+                            {...register("timeline", {
+                              required: "Select timeline",
+                            })}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                             defaultValue=""
                           >
@@ -525,7 +636,11 @@ const LetsCollaborate = () => {
                             <option value="Flexible">Flexible</option>
                             <option value="Not sure">Not sure</option>
                           </select>
-                          {errors.timeline && <p className="text-rose-500 text-sm mt-1">{errors.timeline.message}</p>}
+                          {errors.timeline && (
+                            <p className="text-rose-500 text-sm mt-1">
+                              {errors.timeline.message}
+                            </p>
+                          )}
                         </div>
                       </div>
                     )}
@@ -539,8 +654,12 @@ const LetsCollaborate = () => {
                           render={({ field: { value, onChange } }) => (
                             <div className="flex items-center justify-between">
                               <div>
-                                <label className="font-medium">Do you already have a design ready?</label>
-                                <p className="text-sm text-slate-500">If yes, I can implement directly.</p>
+                                <label className="font-medium">
+                                  Do you already have a design ready?
+                                </label>
+                                <p className="text-sm text-slate-500">
+                                  If yes, I can implement directly.
+                                </p>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -553,9 +672,16 @@ const LetsCollaborate = () => {
                                   )}
                                   aria-pressed={value}
                                 >
-                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                  <span
+                                    className={cx(
+                                      "block w-6 h-6 rounded-full bg-white transition-transform",
+                                      value ? "translate-x-6" : "translate-x-0"
+                                    )}
+                                  />
                                 </button>
-                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                                <span className="text-sm text-slate-600">
+                                  {value ? "Yes" : "No"}
+                                </span>
                               </div>
                             </div>
                           )}
@@ -567,8 +693,13 @@ const LetsCollaborate = () => {
                           render={({ field: { value, onChange } }) => (
                             <div className="flex items-center justify-between">
                               <div>
-                                <label className="font-medium">Do you need backend support?</label>
-                                <p className="text-sm text-slate-500">APIs, database, auth — I can help or integrate with your backend.</p>
+                                <label className="font-medium">
+                                  Do you need backend support?
+                                </label>
+                                <p className="text-sm text-slate-500">
+                                  APIs, database, auth — I can help or integrate
+                                  with your backend.
+                                </p>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -581,9 +712,16 @@ const LetsCollaborate = () => {
                                   )}
                                   aria-pressed={value}
                                 >
-                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                  <span
+                                    className={cx(
+                                      "block w-6 h-6 rounded-full bg-white transition-transform",
+                                      value ? "translate-x-6" : "translate-x-0"
+                                    )}
+                                  />
                                 </button>
-                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                                <span className="text-sm text-slate-600">
+                                  {value ? "Yes" : "No"}
+                                </span>
                               </div>
                             </div>
                           )}
@@ -595,8 +733,12 @@ const LetsCollaborate = () => {
                           render={({ field: { value, onChange } }) => (
                             <div className="flex items-center justify-between">
                               <div>
-                                <label className="font-medium">Is the scope final or still evolving?</label>
-                                <p className="text-sm text-slate-500">Final scopes help with precise estimates.</p>
+                                <label className="font-medium">
+                                  Is the scope final or still evolving?
+                                </label>
+                                <p className="text-sm text-slate-500">
+                                  Final scopes help with precise estimates.
+                                </p>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -609,9 +751,16 @@ const LetsCollaborate = () => {
                                   )}
                                   aria-pressed={value}
                                 >
-                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                  <span
+                                    className={cx(
+                                      "block w-6 h-6 rounded-full bg-white transition-transform",
+                                      value ? "translate-x-6" : "translate-x-0"
+                                    )}
+                                  />
                                 </button>
-                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                                <span className="text-sm text-slate-600">
+                                  {value ? "Yes" : "No"}
+                                </span>
                               </div>
                             </div>
                           )}
@@ -623,8 +772,12 @@ const LetsCollaborate = () => {
                           render={({ field: { value, onChange } }) => (
                             <div className="flex items-center justify-between">
                               <div>
-                                <label className="font-medium">Is your deadline fixed?</label>
-                                <p className="text-sm text-slate-500">Fixed deadlines may need priority planning.</p>
+                                <label className="font-medium">
+                                  Is your deadline fixed?
+                                </label>
+                                <p className="text-sm text-slate-500">
+                                  Fixed deadlines may need priority planning.
+                                </p>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -637,9 +790,16 @@ const LetsCollaborate = () => {
                                   )}
                                   aria-pressed={value}
                                 >
-                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                  <span
+                                    className={cx(
+                                      "block w-6 h-6 rounded-full bg-white transition-transform",
+                                      value ? "translate-x-6" : "translate-x-0"
+                                    )}
+                                  />
                                 </button>
-                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                                <span className="text-sm text-slate-600">
+                                  {value ? "Yes" : "No"}
+                                </span>
                               </div>
                             </div>
                           )}
@@ -651,7 +811,9 @@ const LetsCollaborate = () => {
                     {formCounter === 4 && (
                       <div className="space-y-4">
                         <div>
-                          <label className="text-xs font-medium">Tell me more about your project</label>
+                          <label className="text-xs font-medium">
+                            Tell me more about your project
+                          </label>
                           <textarea
                             {...register("detailedMessage")}
                             className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 min-h-[120px]"
@@ -660,7 +822,8 @@ const LetsCollaborate = () => {
                         </div>
 
                         <div className="text-sm text-slate-500">
-                          You can also attach links to Figma, Drive, or examples in the message above.
+                          You can also attach links to Figma, Drive, or examples
+                          in the message above.
                         </div>
                       </div>
                     )}
@@ -703,7 +866,10 @@ const LetsCollaborate = () => {
 
                     {/* small validation hint */}
                     {!isValid && formCounter === 4 && (
-                      <p className="text-rose-500 text-sm mt-3">Please fill required fields marked with * before submitting.</p>
+                      <p className="text-rose-500 text-sm mt-3">
+                        Please fill required fields marked with * before
+                        submitting.
+                      </p>
                     )}
                   </form>
                 </div>
@@ -717,22 +883,44 @@ const LetsCollaborate = () => {
                   </div>
                   <div>
                     <div className="font-semibold">Prefer a quick chat?</div>
-                    <div className="text-slate-500">Email me directly at <a href="mailto:try.kanishq@gmail.com" className="text-indigo-600">try.kanishq@gmail.com</a></div>
+                    <div className="text-slate-500">
+                      Email me directly at{" "}
+                      <a
+                        href="mailto:try.kanishq@gmail.com"
+                        className="text-indigo-600"
+                      >
+                        try.kanishq@gmail.com
+                      </a>
+                    </div>
                     <div className="mt-3 flex gap-3">
-                      <a href="https://www.linkedin.com/in/kanishqsodhani" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                      <a
+                        href="https://www.linkedin.com/in/kanishqsodhani"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                      >
                         <FaLinkedinIn className="text-slate-700" />
                       </a>
-                      <a href="https://github.com/kanishq-17" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                      <a
+                        href="https://github.com/kanishq-17"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                      >
                         <IoLogoGithub className="text-slate-700" />
                       </a>
-                      <a href="https://twitter.com/yourhandle" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                      <a
+                        href="https://twitter.com/yourhandle"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                      >
                         <FaXTwitter className="text-slate-700" />
                       </a>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
