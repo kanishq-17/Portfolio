@@ -1,615 +1,688 @@
-import { useState } from "react";
-import TextType from "./TextType";
+// CenterPage.jsx
+import React, { useEffect, useState } from "react";
+import { MdWork } from "react-icons/md";
+import { PiGearFine } from "react-icons/pi";
+import { GoFileCode } from "react-icons/go";
+import { FaPlay, FaPause } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { MdOutlinePeopleAlt } from "react-icons/md";
+import { LiaHeadphonesAltSolid } from "react-icons/lia";
+import { FaFilePen } from "react-icons/fa6";
+import { FiTarget, FiCode, FiPenTool } from "react-icons/fi";
+import { FaLaptopCode, FaUserAstronaut } from "react-icons/fa";
 
-import { FcFlashOn } from "react-icons/fc";
-import { RiMic2Line } from "react-icons/ri";
-import { TbArrowNarrowUp } from "react-icons/tb";
+import {
+  SiReact,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiNextdotjs,
+  SiTypescript,
+  SiJavascript,
+} from "react-icons/si";
 
-import { IoEarthSharp } from "react-icons/io5";
-import { IoSettings } from "react-icons/io5";
-import { FaChartBar } from "react-icons/fa";
-import { IoColorPalette } from "react-icons/io5";
+/**
+ * Updated CenterPage:
+ * - Overview: black & white baseline, color on hover
+ * - Project images grayscale -> color on hover; skill tags color on hover
+ * - Tech stack grayscale -> brand color on hover + scale animation
+ * - People avatars grayscale -> color with downward colored shadow on hover
+ * - How I Work interactive steps: click to change active step and navigate to /collaborate
+ * - Small audio player using /assets/Pussypodium.mp3 (put file in public/assets)
+ */
 
-import { IoChevronForwardOutline } from "react-icons/io5";
-import { IoChevronBackOutline } from "react-icons/io5";
+const skillColorMap = {
+  React: "bg-[#61dafb]",
+  "UI Design": "bg-[#FFB86C]",
+  Frontend: "bg-[#ff7a3a]",
+  GSAP: "bg-[#f7df1e]",
+  Tailwindcss: "bg-cyan-700",
+};
 
-import { FaRegCircleUser } from "react-icons/fa6";
-import { GiJusticeStar } from "react-icons/gi";
-import { ImCool } from "react-icons/im";
+// const techColorMap = {
+//   React: "bg-[#61dafb]",
+//   GSAP: "bg-[#1d9bf0]",
+//   Tailwindcss: "bg-[#38b2ac]",
+//   JavaScript: "bg-[#f7df1e]",
+//   Notion: "bg-[#000000]",
+//   LinkedIn: "bg-[#0A66C2]",
+//   Sheets: "bg-[#34A853]",
+// };
 
-import { TbPlaylistAdd } from "react-icons/tb";
+const people = [
+  {
+    img: "/icons/icon1.png",
+    name: "Mayank Pareek",
+    title: "3D Artist",
+    color: "#4f46e5",
+    outline: "#1E90FF",
+  },
+  {
+    img: "/icons/icon2.jpg",
+    name: "Vinit Modi",
+    title: "Business Analyst",
+    color: "#7c3aed",
+    outline: "#A52A2A",
+  },
+  {
+    img: "/icons/icon3.jpg",
+    name: "Rajat Sen",
+    title: "Full Stack Dev",
+    color: "#16a34a",
+    outline: "lime",
+  },
+  {
+    img: "/icons/icon4.jpg",
+    name: "Anupam Mishra",
+    title: "Data Engineer",
+    color: "#f59e0b",
+    outline: "lightyellow",
+  },
+  {
+    img: "/icons/icon5.jpg",
+    name: "Ritik Singh",
+    title: "Front End Dev",
+    color: "#fb7185",
+    outline: "#FF8C00",
+  },
+];
 
 const CenterPage = () => {
-  const [mic, setMic] = useState();
-  const inputBoxLinks = [
+  const navigate = useNavigate();
+
+  // audio player
+  // const audioRef = useRef(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
+
+  // How I work: active step
+  const [activeStep, setActiveStep] = useState(1);
+
+  // project hover state (for special per-card interactions)
+  const [hoverProjectIndex, setHoverProjectIndex] = useState(null);
+
+  const [isPlaying, setIsPlaying] = useState(() => {
+    // initial UI state: check global flag or localStorage
+    if (typeof window !== "undefined") {
+      return (
+        !!window.__GLOBAL_AUDIO_IS_PLAYING__ ||
+        localStorage.getItem("global_audio_playing") === "true"
+      );
+    }
+    return false;
+  });
+
+  // sample projects (two shown in original layout)
+  const projects = [
+    {
+      id: 0,
+      img: "/projectImg/projectImg8.png",
+      title: "Tesla Landing Page",
+      short:
+        "Modern single-page marketing site for an EV brand — micro-animations, responsive layout and CMS-ready sections.",
+      skills: ["React", "UI Design", "Frontend"],
+    },
     {
       id: 1,
-      icons: <IoEarthSharp size={20} />,
-      title: "Website Development",
-    },
-    { id: 2, icons: <FaChartBar size={20} />, title: "Dashboard Interfaces" },
-
-    { id: 3, icons: <IoColorPalette size={20} />, title: "UI/UX Engineering" },
-    {
-      id: 4,
-      icons: <IoSettings size={20} />,
-      title: "Automation & AI Systems",
+      img: "/projectImg/projectImg5.png",
+      title: "DataSquare",
+      short:
+        "Interactive dataset visualization tool built with React + Tailwind and GSAP for smooth transitions and charts.",
+      skills: ["React", "GSAP", "Tailwindcss"],
     },
   ];
 
-  const [currentPost, setCurrentPost] = useState(0);
-  const [catalogue] = useState([
+  // techstack simplified list
+  // const techStack = [
+  //   "React",
+  //   "GSAP",
+  //   "Tailwindcss",
+  //   "JavaScript",
+  //   "Notion",
+  //   "Sheets",
+  // ];
+
+  // Experience items
+  const experience = [
+    { year: "2023", company: "Guljag Info Tech", role: "Frontend Engineer" },
+    {
+      year: "2024",
+      company: "Celebal Technologies",
+      role: "Frontend Engineer",
+    },
+  ];
+
+  // How I work content (replaceable)
+  const steps = [
     {
       id: 1,
-      img: "https://images.unsplash.com/photo-1760346738721-bc8e0678623f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDh8Q0R3dXdYSkFiRXd8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=60&w=600",
-      time: "5 min",
-      title: "6 Google Sheets automation ideas to organize your business",
+      heading: "Discovery Call",
       content:
-        "Two things are guaranteed in the workplace: coffee, and a spreadsheet. Google Sheets is one of the most widely used spreadsheet apps, and if you haven't used i",
-      cta: "Read the post",
+        "30-minute call to understand your goals, constraints and success metrics. We set scope and a clear next step.",
+      bg: "bg-gradient-to-r from-gray-900 to-gray-700",
     },
     {
       id: 2,
-      img: "https://images.unsplash.com/photo-1758883019110-04c79dc56a71?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDEzfENEd3V3WEpBYkV3fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&q=60&w=600",
-      time: "3 min",
-      title: "6 Gmail automation ideas",
+      heading: "Scope & Proposal",
       content:
-        "Discover how a few automated workflows can save you time and minimize repetitive tasks in your Gmail inbox.",
-      cta: "Read the post",
+        "I prepare a clear proposal with wireframes, timeline and costs. We align milestones and delivery dates.",
+      bg: "bg-gradient-to-r from-indigo-900 to-indigo-700",
     },
     {
       id: 3,
-      img: "https://images.unsplash.com/photo-1721414209360-7b8f669a1d8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDI3fENEd3V3WEpBYkV3fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&q=60&w=600",
-      time: "",
-      title: "Behind the scenes of AI transformation",
+      heading: "Design & Build",
       content:
-        "Real stories, real workflows, and real lessons from operators at Zapier, Webflow, and PandaDoc who are redefining how work gets done with AI",
-      cta: "Subscribe now",
+        "Designs come to life with responsive, accessible code. I share previews and iterate until sign-off.",
+      bg: "bg-gradient-to-r from-emerald-900 to-emerald-700",
     },
     {
       id: 4,
-      img: "https://plus.unsplash.com/premium_photo-1760327154365-25a2b68a013c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDI2fENEd3V3WEpBYkV3fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&q=60&w=600",
-      time: "1 min",
-      title: "New: Connect Yelp to your CRM in minutes—try it free",
-      content: "",
-      cta: "Read the post",
+      heading: "Ship & Support",
+      content:
+        "I help with deployment, analytics hook-ups and a short support window for any post-launch tweaks.",
+      bg: "bg-gradient-to-r from-rose-900 to-rose-700",
     },
-  ]);
+  ];
 
-  const [ctaBtnCounter, setCtaBtnCounter] = useState(1);
+  // ensure global audio exists (in case you forgot to init in index)
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.__GLOBAL_AUDIO__) {
+      const audio = new Audio("/assets/Pussypodium.mp3");
+      audio.loop = true;
+      audio.preload = "metadata";
+      audio.volume = 0.7;
+      window.__GLOBAL_AUDIO__ = audio;
+      window.__GLOBAL_AUDIO_IS_PLAYING__ = false;
+    }
 
-  const [forYouBtn] = useState([
-    {
-      img1: "/react.png",
-      img2: "/tailwindcss.png",
-      title:
-        "Build and visualize datasets interactively using React + Tailwind — designed for fast insights and clean UI.",
-      shortLine: "⭐ Recommended for you",
-    },
-    {
-      img1: "/react.png",
-      img2: "/javascript.png",
-      title:
-        "The system powering my entire developer portfolio — modular, responsive, and inspired by Zapier’s UX.",
-      shortLine: "⭐ Recommended for you",
-    },
-    {
-      img1: "/tailwindcss.png",
-      img2: "/gsap.png",
-      title:
-        "Experimenting with GSAP and Tailwindcss to build interactive component animations and transitions.",
-      shortLine: "⭐ Recommended for you",
-    },
-  ]);
+    // Sync local state with global when the page first mounts
+    if (typeof window !== "undefined") {
+      const g = window.__GLOBAL_AUDIO__;
+      if (g) {
+        // optional: if it's already playing in another tab/route, reflect that
+        setIsPlaying(!!window.__GLOBAL_AUDIO_IS_PLAYING__);
+      }
+    }
+  }, []);
 
-  const [aiWorkBtn] = useState([
-    {
-      img1: "/gmail.png",
-      img2: "/sheets.png",
-      title:
-        "Automatically log new client emails from Gmail into Google Sheets for organized project tracking.",
-      shortLine: "AI-powered",
-    },
-    {
-      img1: "/chatgpt.png",
-      img2: "/gemini.png",
-      title:
-        "Generate stunning visuals using prompt-based AI workflows with OpenAI + custom parameters.",
-      shortLine: "AI-powered",
-    },
-    {
-      img1: "/notion.png",
-      img2: "/drive.png",
-      title:
-        "Automate daily data refresh and notifications using n8n workflows between Notion and Google Drive.",
-      shortLine: "AI-powered",
-    },
-  ]);
+  // toggle audio playback (called by your play/pause button)
+  const toggleAudio = async () => {
+    if (typeof window === "undefined") return;
+    const g = window.__GLOBAL_AUDIO__;
+    if (!g) return;
 
-  const [mostPopBtn] = useState([
-    {
-      img1: "/linkedin.png",
-      img2: "/twitter.png",
-      title:
-        "A post about how consistent documentation and sharing can 10x your learning and opportunities.",
-      shortLine: "Used by 7k",
-    },
-    {
-      img1: "/docs.png",
-      img2: "/drive.png",
-      title:
-        "A deep-dive document covering Promises, async/await, and error handling with visuals.",
-      shortLine: "Used by 4k",
-    },
-    {
-      img1: "/react.png",
-      img2: "/tailwindcss.png",
-      title:
-        "My flagship project featured in multiple discussions — a fast, clean, data-driven React app.",
-      shortLine: "Used by 3k",
-    },
-  ]);
+    if (window.__GLOBAL_AUDIO_IS_PLAYING__) {
+      // pause
+      g.pause();
+      window.__GLOBAL_AUDIO_IS_PLAYING__ = false;
+      setIsPlaying(false);
+      localStorage.setItem("global_audio_playing", "false");
+    } else {
+      // play (user gesture required — this is a button click so it should be allowed)
+      try {
+        await g.play();
+        window.__GLOBAL_AUDIO_IS_PLAYING__ = true;
+        setIsPlaying(true);
+        localStorage.setItem("global_audio_playing", "true");
+      } catch (err) {
+        console.warn("Audio play blocked:", err);
+        // optionally show a toast "Playback blocked by browser"
+      }
+    }
+  };
 
-  const [prompts] = useState([
-    [
-      "Website development",
-      {
-        id: 1,
-        prompt:
-          "Design and develop responsive multi-page websites using React + Tailwind with SEO optimization.",
-      },
-      {
-        id: 2,
-        prompt:
-          "Develop interactive landing pages with animations using Framer Motion.",
-      },
-      {
-        id: 3,
-        prompt:
-          "Integrate Firebase or APIs to fetch live data and make dynamic pages.",
-      },
-      {
-        id: 4,
-        prompt:
-          "Deploy websites instantly on Vercel or GitHub Pages with custom domains.",
-      },
-    ],
-    [
-      "Dashboard interface",
-      {
-        id: 1,
-        prompt:
-          "Build admin dashboards with real-time charts using Recharts or Chart.js.",
-      },
-      {
-        id: 2,
-        prompt: "Integrate APIs to display live shipment or user activity",
-      },
-      {
-        id: 3,
-        prompt:
-          "Add role-based access controls and user management dashboards.",
-      },
-      {
-        id: 4,
-        prompt:
-          "Implement modular card layouts with filters, pagination, and search functionality.",
-      },
-    ],
-    [
-      "UI/UX engineering",
-      {
-        id: 1,
-        prompt:
-          "Translate Figma designs into production-ready React components.",
-      },
-      {
-        id: 2,
-        prompt:
-          "Build a reusable design system — buttons, modals, forms, and cards.",
-      },
-      {
-        id: 3,
-        prompt:
-          "Craft clean, accessible interfaces with Tailwind and shadcn/ui.",
-      },
-      {
-        id: 4,
-        prompt: "Add fluid animations and transitions using Framer Motion.",
-      },
-    ],
-    [
-      "Automation & AI systems",
-      {
-        id: 1,
-        prompt:
-          "Integrate AI tools (OpenAI API, Gemini, or Llama) for intelligent responses.",
-      },
-      {
-        id: 2,
-        prompt:
-          "Connect Gmail, Notion, and Google Sheets to auto-update workflows.",
-      },
-      {
-        id: 3,
-        prompt:
-          "Automate repetitive tasks like data syncing using Zapier & webhooks.",
-      },
-      {
-        id: 4,
-        prompt:
-          "Create smart notifications for task tracking and project automation.",
-      },
-    ],
-  ]);
+  // keep UI in sync if user controls audio externally (optional)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const g = window.__GLOBAL_AUDIO__;
+    if (!g) return;
+    const onPlay = () => {
+      window.__GLOBAL_AUDIO_IS_PLAYING__ = true;
+      setIsPlaying(true);
+      localStorage.setItem("global_audio_playing", "true");
+    };
+    const onPause = () => {
+      window.__GLOBAL_AUDIO_IS_PLAYING__ = false;
+      setIsPlaying(false);
+      localStorage.setItem("global_audio_playing", "false");
+    };
+    g.addEventListener("play", onPlay);
+    g.addEventListener("pause", onPause);
+    return () => {
+      g.removeEventListener("play", onPlay);
+      g.removeEventListener("pause", onPause);
+    };
+  }, []);
 
-  const [autoPrompts] = useState([
-    // Welcome
-    "✨ Welcome! Let’s build something meaningful.",
-
-    // Tech stack
-    "⚛️ React-crafted interfaces that feel effortless.",
-    "📜 JavaScript that actually behaves itself (mostly).",
-    "🔷 TypeScript for projects that need discipline.",
-
-    // Serious / result-focused
-    "⚡ Fast, reliable, production-ready builds.",
-    "🎯 Pixel-perfect execution with scalable architecture.",
-
-    // Percentage-based
-    "📈 A great UI can boost user trust by 70%.",
-    "🎛️ Micro-interactions enhance experience by 40%.",
-
-    // Serious / result-focused
-    "🚀 Performance-first frontend engineering.",
-    "🛡️ Robust systems designed to handle real users.",
-
-    // Tech stack
-    "🟢 Node.js APIs that respond instantly.",
-    "🧩 Express servers built with precision.",
-    "🍃 MongoDB that scales without complaining.",
-  ]);
-
-  const [closeBtn, setCloseBtn] = useState(false);
-
-  const [activeGroupPromptIndex, setActiveGroupPromptIndex] = useState(null);
+  const goCollaborate = () => {
+    navigate("/collaborate");
+  };
 
   return (
-    <div className="main-page w-full pb-10 bg-[#f4f1f1] text-black">
-      {/* //! input-box div */}
-      <div className="mt-14">
-        <h1 className="font-bold text-center text-3xl z-0 font-roboto">
-          What would you like to build today?
-        </h1>
-        <div className="bg-neutral-50 w-210 h-42 m-auto mt-8 rounded-lg outline-1 outline-gray-300">
-          {/* //! input-box header */}
-          <div className="flex gap-3 items-center border-b px-3 py-2 border-gray-300">
-            <div className="flex items-center">
-              <span className="text-2xl w-fit">
-                <FcFlashOn />
-              </span>
-              <h4 className="font-bold">Copilot</h4>
-            </div>
-            <h4 className="text-neutral-500 outline-1 outline-gray-400 px-1 py-1 text-xs rounded-sm font-medium">
-              AI Beta
-            </h4>
-          </div>
+    <div className="w-full mb-10 cursor-default">
+      {/* header area (kept same) */}
+      <div className="pl-6 md:pl-14 pt-6 pr-6 select-none">
+        {/* Subheading */}
+        <h4 className="text-neutral-500 font-light tracking-wide text-sm md:text-base">
+          The{" "}
+          <span className="text-rose-500 font-medium">Frontend Engineer</span>{" "}
+          you’ll want on your team.
+        </h4>
 
-          {/* //! input-box message */}
-          <div>
-            <h4 className="px-5 text-neutral-800 mt-2 text-xl">
-              <TextType
-                text={autoPrompts}
-                typingSpeed={75}
-                pauseDuration={1500}
-                showCursor={true}
-                cursorCharacter="|"
-              />
-            </h4>
-          </div>
-
-          {/* //! input-box buttons */}
-          <div className="flex items-center justify-end gap-3 w-full mt-14 rounded-b-lg h-8 pr-3 relative">
-            <span
-              onMouseEnter={() => {
-                setMic(true);
-              }}
-              onMouseLeave={() => setMic(false)}
-              className={` text-xl rounded-sm px-1 py-1 cursor-pointer text-slate-500  ${
-                mic ? "bg-blue-200/20" : ""
-              }`}
-            >
-              <RiMic2Line />
-            </span>
-            <span
-              className={`z-20 rounded-sm bg-black text-white px-1 py-1 absolute top-11 right-0 ${
-                mic ? "none" : "hidden"
-              }`}
-            >
-              Coming soon 🔉
-            </span>
-            <span className="bg-zinc-200 text-xl rounded-sm px-1 py-1 opacity-70">
-              <TbArrowNarrowUp />{" "}
-            </span>
-          </div>
-        </div>
-
-        {/* //! input-box links */}
-        <div className="mt-4 flex gap-3 items-center justify-center text-blue-800 font-medium relative">
-          {inputBoxLinks.map((box, index) => (
-            <div
-              key={box.id}
-              onClick={() => {
-                setActiveGroupPromptIndex(index);
-                setCloseBtn(true);
-              }}
-              className="input-box-links hover:bg-blue-200/20 px-1 py-2 rounded-sm flex items-center gap-2 cursor-pointer text-sm"
-            >
-              <span>{box.icons}</span>
-              <h5>{box.title}</h5>
-            </div>
-          ))}
-        </div>
-
-        {/* //! input-box prompts */}
-        <div
-          className={`w-210 rounded-lg outline-1 outline-gray-300 bg-white m-auto absolute z-10 top-110 left-84 shadow-md shadow-gray-800 ${
-            closeBtn ? "none" : "hidden"
-          }`}
+        {/* Main Heading */}
+        <h1
+          className="
+    font-extrabold
+    text-4xl md:text-5xl lg:text-6xl
+    mt-3 leading-tight text-slate-900
+  "
         >
-          {activeGroupPromptIndex !== null && (
-            <>
-              <div className="flex justify-between items-center p-2 py-3">
-                <h4 className="font-medium text-neutral-500">
-                  {prompts[activeGroupPromptIndex][0]}
-                </h4>
-                <button
-                  onClick={() => setCloseBtn(false)}
-                  className="z-10 text-blue-600 hover:bg-blue-300/10 px-1 text-sm cursor-pointer rounded-xs"
-                >
-                  Close X
-                </button>
+          Hey, I'm Kanishq
+          <br />
+          <span className="text-gray-800">
+            I Design, Code & Build Products
+          </span>
+        </h1>
+
+        {/* Roles + badges */}
+        <div className="mt-6 flex items-center flex-wrap gap-4 text-neutral-600 text-sm md:text-base">
+          {/* Role badges */}
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 shadow-sm">
+              <FaLaptopCode className="text-slate-600" />
+              Full Time
+            </span>
+
+            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 shadow-sm">
+              <FaUserAstronaut className="text-slate-600" />
+              Intern
+            </span>
+          </div>
+
+          {/* Skill icons */}
+          <div className="flex items-center gap-3 ml-1 md:ml-6">
+            <span className="p-2 rounded-full bg-neutral-50 text-slate-600">
+              <FiPenTool size={18} />
+            </span>
+
+            <span className="p-2 rounded-full bg-neutral-50 text-slate-600">
+              <FiCode size={18} />
+            </span>
+
+            <span className="p-2 rounded-full bg-neutral-50 text-slate-600">
+              <FiTarget size={18} />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* OVERVIEW container (monochrome baseline) */}
+      <div
+        id="overview-container"
+        className="w-[95%] mx-auto rounded-3xl bg-neutral-100/10 mt-10 p-6 md:p-10 backdrop-blur-sm"
+      >
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* LEFT column */}
+          <div className="flex flex-col gap-6 w-full lg:w-1/3">
+            {/* EXPERIENCE - monochrome */}
+            <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem]">
+                  <MdWork />
+                  <span>Experience</span>
+                </div>
               </div>
-              <div className="">
-                {prompts[activeGroupPromptIndex].slice(1).map((item) => (
-                  <>
-                    <div className="flex items-center gap-4 p-2 hover:bg-purple-300/10 w-[97%] m-auto py-4">
-                      <span className="text-blue-600 text-xl">
-                        <TbPlaylistAdd />
-                      </span>
-                      <p className="text-slate-900">{item.prompt}</p>
-                    </div>
-                    <hr className="w-[97%] m-auto text-gray-300" />
-                  </>
+
+              <div className="relative pl-6">
+                <div className="absolute left-2 top-6 bottom-6 w-0.5 bg-neutral-700/60" />
+                {experience.map((ex, idx) => (
+                  <div key={idx} className="relative mb-6 pl-6">
+                    <div
+                      className="absolute left-[-.45rem] w-3 h-3 rounded-full"
+                      style={{
+                        background: "#fff",
+                        boxShadow: "0 0 0 4px rgba(255,255,255,0.05)",
+                      }}
+                    />
+                    <p className="text-sm text-neutral-200 font-medium">
+                      {ex.company}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {ex.year} — {ex.role}
+                    </p>
+                  </div>
                 ))}
               </div>
-            </>
-          )}
-        </div>
-      </div>
+            </div>
 
-      {/* //? Project-box div */}
-      <h2 className="text-2xl font-bold mt-20 w-3/4 m-auto">
-        Build from Scratch
-      </h2>
-      <div className="w-3/4 m-auto min-h-112 flex gap-5 items-center pt-8">
-        {/* //? Catalogue box */}
-        <div className="catalogue-box w-1/2 rounded-md bg-[#fec89a] h-113 relative p-3 outline-1 outline-gray-300">
-          <img
-            src={catalogue[currentPost].img}
-            alt=""
-            className="bg-rose-300 w-3/4 m-auto h-44 object-cover"
-          />
-          <div className="content-div mt-3">
-            <p className="text-sm">
-              Based on your apps<span>▪️{catalogue[currentPost].time}</span>
-            </p>
-            <h5 className="font-medium my-2 text-lg">
-              {catalogue[currentPost].title}
-            </h5>
-            <p className="text-sm mt-1">{catalogue[currentPost].content}</p>
-          </div>
-          <div className="page-up-down flex items-center w-full justify-between mt-5 gap-4 absolute bottom-5">
-            <button className="text-xs rounded-sm px-3 py-1 outline-1 cursor-pointer">
-              {catalogue[currentPost].cta}
-            </button>
-            <div className="page-counter&page-up-down w-1/2 flex items-center justify-center gap-2">
-              <p className="flex items-center gap-2 mb-0">
-                <span>{catalogue[currentPost].id} of 4</span>
-                <span
-                  onClick={() => {
-                    setCurrentPost((prev) => (prev > 0 ? prev - 1 : prev));
-                  }}
-                  disabled={currentPost === 0}
-                  className="bg-zinc-500 rounded-sm px-1 py-1 text-md flex items-center cursor-pointer"
-                >
-                  <IoChevronBackOutline />
-                </span>
-                <span
-                  onClick={() => {
-                    setCurrentPost((prev) =>
-                      prev < catalogue.length - 1 ? prev + 1 : prev
-                    );
-                  }}
-                  disabled={currentPost === catalogue.length - 1}
-                  className={`bg-zinc-500 rounded-sm px-1 py-1 text-md flex items-center cursor-pointer ${
-                    currentPost === catalogue.length - 1 ? "cursor-none" : ""
-                  }`}
-                >
-                  <IoChevronForwardOutline />
-                </span>
+            {/* PEOPLE words about me */}
+            <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
+              <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem] mb-4">
+                <MdOutlinePeopleAlt />
+                <span>People words about me</span>
+              </div>
+
+              <div className="flex items-center gap-3 my-4">
+                {people.map((p, i) => (
+                  <div key={i} className="group relative">
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      className="w-12 h-12 rounded-full object-cover filter grayscale contrast-[0.85] transition-all duration-300 group-hover:grayscale-0"
+                      style={{ outline: `3px solid ${p.outline}` }}
+                    />
+                    {/* colored downward shadow when hovered */}
+                    <div
+                      className="absolute left-0 right-0 -bottom-2 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{
+                        boxShadow: `0 18px 22px -14px ${p.color}`,
+                        borderRadius: "6px",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <h4 className="font-semibold text-lg text-neutral-100">
+                Trusted by teams & makers
+              </h4>
+              <p className="text-xs text-neutral-500 mt-2">
+                I help startups and teams ship modern interfaces — building
+                accessible, responsive frontends that scale.
               </p>
             </div>
-          </div>
-        </div>
-        {/* //? Project showing box */}
-        <div className="recent-project-box w-full rounded-xl bg-white/10 backdrop-blur-md text-black border border-gray-300/50 shadow-lg">
-          {/* Header */}
-          <div className="flex justify-between items-center p-4 border-gray-300/30 border-b">
-            <h2 className="font-semibold text-3xl drop-shadow-sm">
-              Popular Templates
-            </h2>
-            <h5 className="text-blue-400/80 cursor-pointer hover:underline hover:text-blue-300 transition">
-              Browse all templates
-            </h5>
-          </div>
 
-          {/* CTA Buttons */}
-          <div className="project-showing-cta-links flex p-4 pt-10 items-center gap-3 font-medium text-sm">
-            {/* BTN - 1 */}
-            <button
-              onClick={() => setCtaBtnCounter(1)}
-              className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
-                ctaBtnCounter === 1
-                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
-                  : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
-              }`}
-            >
-              <FaRegCircleUser />
-              <p>For you</p>
-            </button>
-
-            {/* BTN - 2 */}
-            <button
-              onClick={() => setCtaBtnCounter(2)}
-              className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
-                ctaBtnCounter === 2
-                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
-                  : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
-              }`}
-            >
-              <GiJusticeStar />
-              <p>AI Workflows</p>
-            </button>
-
-            {/* BTN - 3 */}
-            <button
-              onClick={() => setCtaBtnCounter(3)}
-              className={`cursor-pointer rounded-md px-3 py-1 flex items-center gap-2 backdrop-blur-md border transition-all duration-200 ${
-                ctaBtnCounter === 3
-                  ? "border-blue-400 bg-blue-300/20 text-blue-500 shadow-inner"
-                  : "border-gray-400/40 bg-white/10 text-black hover:bg-white/20"
-              }`}
-            >
-              <ImCool />
-              <p>Most popular</p>
-            </button>
-          </div>
-
-          {/* Project Cards */}
-          <div className="project-showing-card w-full px-4 pt-5 pb-10 flex items-stretch gap-5 justify-between">
-            {/* For You Cards */}
-            {ctaBtnCounter === 1 &&
-              forYouBtn.map((firstBtn, index) => (
-                <div
-                  key={index}
-                  className="card-1 flex-1 bg-[#fcd5ce] backdrop-blur-lg border border-gray-300/40 rounded-lg p-4 shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-black h-64 flex flex-col justify-between"
-                >
-                  <div className="tech-stack-img flex items-center justify-center gap-3 py-2 w-1/2 mx-auto rounded-md bg-white/10 border border-gray-400/40">
-                    <img
-                      src={firstBtn.img1}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
-                    <img
-                      src={firstBtn.img2}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
-                  <p className="text-md pt-6 font-semibold text-left">
-                    {firstBtn.title}
-                  </p>
-                  <p className="pt-4 text-sm font-medium text-center text-black">
-                    {firstBtn.shortLine}
-                  </p>
+            {/* AUDIO / SONG */}
+            <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
+              <div className="flex items-center justify-between mb-3">
+                <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem]">
+                  <span>
+                    <LiaHeadphonesAltSolid />
+                  </span>{" "}
+                  What's I'm Listening
                 </div>
-              ))}
+                <div className="text-xs text-neutral-500">Relax · loop</div>
+              </div>
 
-            {/* AI Workflows Cards */}
-            {ctaBtnCounter === 2 &&
-              aiWorkBtn.map((secondBtn, index) => (
+              <div className="flex items-center gap-4">
                 <div
-                  key={index}
-                  className="card-1 flex-1 bg-[#fcd5ce] backdrop-blur-lg border border-gray-300/40 rounded-lg p-4 shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-black  h-64 flex flex-col justify-between"
+                  className={`w-20 h-20 rounded-md overflow-hidden border border-neutral-700 transition-all duration-300 ${
+                    isPlaying
+                      ? "filter-none scale-100"
+                      : "filter grayscale contrast-[0.7] scale-100"
+                  }`}
                 >
-                  <div className="tech-stack-img flex items-center justify-center gap-3 py-2 w-1/2 mx-auto rounded-md bg-white/10 border border-gray-400/40">
-                    <img
-                      src={secondBtn.img1}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
-                    <img
-                      src={secondBtn.img2}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
-                  <p className="text-md pt-6 font-semibold text-left">
-                    {secondBtn.title}
-                  </p>
-                  <p className="pt-4 text-sm font-medium text-center text-black">
-                    {secondBtn.shortLine}
-                  </p>
+                  <img
+                    src="/avatar-song.png"
+                    alt="song artwork"
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
                 </div>
-              ))}
 
-            {/* Most Popular Cards */}
-            {ctaBtnCounter === 3 &&
-              mostPopBtn.map((thirdBtn, index) => (
-                <div
-                  key={index}
-                  className="card flex-1 bg-[#fcd5ce] backdrop-blur-lg border border-gray-300/40 rounded-lg p-4 shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-black h-64 flex flex-col justify-between"
-                >
-                  <div className="tech-stack-img flex items-center justify-center gap-3 py-2 w-1/2 mx-auto rounded-md bg-white/10 border border-gray-400/40">
-                    <img
-                      src={thirdBtn.img1}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
-                    <img
-                      src={thirdBtn.img2}
-                      alt=""
-                      className="w-8 h-8 object-contain"
-                    />
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={toggleAudio}
+                      className="cursor-pointer w-12 h-12 rounded-full bg-[#ff6a3d] flex items-center justify-center text-white"
+                      aria-label="play"
+                    >
+                      {isPlaying ? <FaPause /> : <FaPlay />}
+                    </button>
+                    <div>
+                      <div className="font-medium text-neutral-100">
+                        Rolling in the Deep
+                      </div>
+                      <div className="text-xs text-neutral-500">
+                        beat · phonk
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-md font-semibold text-left">
-                    {thirdBtn.title}
-                  </p>
                 </div>
-              ))}
-          </div>
-        </div>
-      </div>
-
-      {/* //? Recently uploaded work */}
-      <div className="w-3/4 m-auto mt-10 border border-gray-300 rounded-md">
-        <h2 className="p-4 font-semibold text-2xl border-b border-gray-300">
-          Recently updated
-        </h2>
-        <div className="w-full pt-4 px-2 flex items-center justify-between pb-4">
-          <h4 className="font-semibold">⚡ Portfolio v1.0 launched</h4>
-          <div className="flex items-center justify-between w-1/7">
-            <div className="flex items-center gap-2 p-1 justify-around border border-gray-300 rounded-sm">
-              <img
-                src="/react.png"
-                alt=""
-                className="w-7 h-7 object-cover rounded-sm"
-              />
-              <img
-                src="/javascript.png"
-                alt=""
-                className="w-7 h-7 object-cover"
-              />
-              <img
-                src="/tailwindcss.png"
-                alt=""
-                className="w-7 h-7 object-cover rounded-sm"
-              />
+              </div>
             </div>
-            <h4 className="rounded-sm  bg-green-300/80 p-1">ON</h4>
           </div>
-          <p className="text-sm text-neutral-600">Published 1h ago</p>
+
+          {/* RIGHT column */}
+          <div className="w-full lg:w-2/3 flex flex-col gap-6">
+            {/* CURRENT PROJECTS */}
+            <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
+              <div className="flex items-center justify-between mb-3">
+                <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem]">
+                  <PiGearFine />
+                  <span>Currently Building</span>
+                </div>
+                <div className="text-xs text-neutral-500">
+                  Design • Frontend • Motion
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projects.map((proj, idx) => (
+                  <div
+                    key={proj.id}
+                    onMouseEnter={() => setHoverProjectIndex(idx)}
+                    onMouseLeave={() => setHoverProjectIndex(null)}
+                    className="group rounded-md overflow-hidden border border-neutral-700/30 relative bg-neutral-900/30 transition-transform duration-300 hover:scale-[1.01]"
+                  >
+                    {/* image: grayscale baseline -> color on hover */}
+                    <div className="relative">
+                      <img
+                        src={proj.img}
+                        alt={proj.title}
+                        className={`w-full h-44 object-cover transition-all duration-400 ${
+                          hoverProjectIndex === idx
+                            ? "filter-none brightness-100"
+                            : "filter grayscale contrast-75"
+                        }`}
+                      />
+                      <div className="absolute left-3 top-3 flex gap-2">
+                        {proj.skills.map((s) => {
+                          const base = skillColorMap[s] || "bg-neutral-700";
+                          // on hover, make tag colored and add outline deeper variant
+                          return (
+                            <div
+                              key={s}
+                              className={`text-[.65rem] px-3 py-1 rounded-full text-black font-medium transition-all duration-300 ${
+                                hoverProjectIndex === idx
+                                  ? `${base} ring-2 ring-offset-1 ring-black/20`
+                                  : "bg-white/10 text-neutral-300"
+                              }`}
+                            >
+                              {s}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-linear-to-b from-black/60 to-transparent">
+                      <h4 className="text-lg font-semibold text-neutral-50">
+                        {proj.title}
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {proj.short}
+                      </p>
+
+                      <div className="mt-3 flex items-center gap-3">
+                        <button
+                          className="cursor-pointer text-sm px-3 py-2 rounded-md bg-white/10 border border-neutral-700/30 text-neutral-200"
+                          onClick={() => navigate("/projects/")}
+                        >
+                          View details
+                        </button>
+                        <button
+                          className="cursor-pointer text-sm px-3 py-2 rounded-md bg-[#ff6a3d] text-white"
+                          onClick={() => navigate("/contact")}
+                        >
+                          Discuss
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* TECH STACK */}
+            {/* TECH STACK (updated with icons + brand hover) */}
+            <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
+              <div className="flex items-center justify-between mb-3">
+                <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem]">
+                  <GoFileCode />
+                  <span>Technologies I use</span>
+                </div>
+                <div className="text-xs text-neutral-500">
+                  Production-ready tools
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {/* React */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center">
+                      <SiReact className="text-[20px] text-sky-400 group-hover:text-[#61dafb]" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        React
+                      </div>
+                      <div className="text-xs text-neutral-500">UI</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* JavaScript */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center border border-neutral-700/30">
+                      <SiJavascript className="text-[20px] group-hover:text-[#f7df1e]" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        JavaScript
+                      </div>
+                      <div className="text-xs text-neutral-500">Language</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* TypeScript */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center border border-neutral-700/30">
+                      <SiTypescript className="text-[20px] group-hover:text-[#2b7cff]" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        TypeScript
+                      </div>
+                      <div className="text-xs text-neutral-500">Types</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Node */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center border border-neutral-700/30">
+                      <SiNodedotjs className="text-[20px] group-hover:text-[#8cc84b]" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        Node
+                      </div>
+                      <div className="text-xs text-neutral-500">Server</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Next */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center border border-neutral-700/30">
+                      <SiNextdotjs className="text-[20px] group-hover:text-black" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        Next
+                      </div>
+                      <div className="text-xs text-neutral-500">Framework</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tailwind */}
+                <div className="group">
+                  <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center border border-neutral-700/30">
+                      <SiTailwindcss className="text-[20px] group-hover:text-[#38b2ac]" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm text-neutral-100">
+                        Tailwindcss
+                      </div>
+                      <div className="text-xs text-neutral-500">Styling</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* HOW I WORK */}
+            <div
+              className={`rounded-lg border border-neutral-700/40 overflow-hidden transition-all duration-400 ${
+                steps.find((s) => s.id === activeStep)?.bg ?? "bg-neutral-800"
+              }`}
+            >
+              <div className="p-4 text-neutral-100">
+                <div className="inline-flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full text-[0.7rem] mb-3">
+                  <FaFilePen />
+                  <span>How I work</span>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
+                  <div className="flex flex-col gap-3 w-full md:w-1/4">
+                    {steps.map((step) => (
+                      <button
+                        key={step.id}
+                        onClick={() => setActiveStep(step.id)}
+                        className={`text-left px-3 py-2 rounded-md transition-all duration-300 cursor-pointer ${
+                          activeStep === step.id
+                            ? "bg-white/10 text-white scale-[1.01] shadow-inner"
+                            : "bg-black/20 text-neutral-200 hover:bg-white/5"
+                        }`}
+                      >
+                        <div className="font-semibold">
+                          Step {String(step.id).padStart(2, "0")}
+                        </div>
+                        <div className="text-xs text-neutral-300">
+                          {step.heading}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex-1 bg-black/30 rounded-md p-4">
+                    <h3 className="font-bold text-2xl text-white">
+                      {steps.find((s) => s.id === activeStep)?.heading}
+                    </h3>
+                    <p className="text-neutral-200 mt-2">
+                      {steps.find((s) => s.id === activeStep)?.content}
+                    </p>
+
+                    <div className="mt-6">
+                      <button
+                        onClick={goCollaborate}
+                        className="cursor-pointer px-4 py-2 rounded-md bg-[#ff6a3d] text-white font-medium"
+                      >
+                        Let's Collaborate
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

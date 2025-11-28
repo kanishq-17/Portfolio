@@ -10,12 +10,11 @@ const App = () => {
   return (
     <div className="bg-[#f4f1f1]">
       <Header />
-      {/* <SideBar /> */}
       <Routes>
         <Route path="/" element={<CenterPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/collaborate" element={<LetsCollaborate />} />
-        <Route path="/builds" element={<ProjectPage />} />
+        <Route path="/projects" element={<ProjectPage />} />
       </Routes>
       <Footer />
     </div>
