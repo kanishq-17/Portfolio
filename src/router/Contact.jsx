@@ -1,22 +1,31 @@
+// Contact.jsx
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-
-import { FaLinkedinIn } from "react-icons/fa";
+import emailjs from "@emailjs/browser";
+import { Link } from "react-router-dom";
+import { FaLinkedinIn, FaReact } from "react-icons/fa";
 import { IoLogoGithub } from "react-icons/io";
 import { FaXTwitter } from "react-icons/fa6";
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+
+const RECEIVE_EMAIL = "try.kanishq@gmail.com";
 
 export default function Contact() {
-  const [techStack] = useState([
-    "Node",
-    "React",
-    "Express",
-    "MongoDB",
-    "JavaScript",
-    "TypeScript",
-  ]);
+  // -----------------------
+  // Env / EmailJS config
+  // -----------------------
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const CONTACT_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-  const { register, handleSubmit, reset, formState } = useForm({
+  // -----------------------
+  // Form state (react-hook-form)
+  // -----------------------
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
     defaultValues: {
       fullName: "",
       email: "",
@@ -25,20 +34,33 @@ export default function Contact() {
     },
   });
 
-  const { errors, isSubmitting } = formState;
+  // -----------------------
+  // Toast
+  // -----------------------
+  const [toast, setToast] = useState(null); // { type: 'success'|'error', text }
+  const toastTimerRef = useRef(null);
 
-  const onFormSubmit = async (data) => {
-    console.log("Contact form data:", data);
+  function showToast(type, text) {
+    setToast({ type, text });
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(null), 3500);
+  }
 
-    reset();
-  };
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  // -----------------------
+  // MagneticSpan (small micro-interaction) - optional
+  // -----------------------
 
   function MagneticSpan({ children }) {
-    const wrapperRef = useRef(null); // outer span
-    const innerRef = useRef(null); // inner icon span
+    const wrapperRef = useRef(null);
+    const innerRef = useRef(null);
     const rafRef = useRef(null);
 
-    // animation state stored in a ref for minimal re-renders
     const stateRef = useRef({
       // current positions
       cx: 0, // outer current x
@@ -90,7 +112,7 @@ export default function Contact() {
 
     function animate() {
       const s = stateRef.current;
-      const ease = 0.18; // responsiveness - adjust slightly if you want snappier or smoother
+      const ease = 0.18;
 
       // outer easing
       s.cx = lerp(s.cx, s.tx, ease);
@@ -148,160 +170,322 @@ export default function Contact() {
     );
   }
 
+  // -----------------------
+  // send email via EmailJS
+  // -----------------------
+  async function sendContactEmail(formData) {
+    // formData: { fullName, email, company, message }
+    // validate env
+    if (!SERVICE_ID || !CONTACT_TEMPLATE_ID || !PUBLIC_KEY) {
+      // fallback: open mail client
+      showToast(
+        "error",
+        "EmailJS keys missing — opening mail client as fallback."
+      );
+      const subject = encodeURIComponent(
+        `Contact from ${formData.fullName || formData.email}`
+      );
+      const body = encodeURIComponent(
+        `Name: ${formData.fullName}\nEmail: ${formData.email}\nCompany: ${
+          formData.company || "-"
+        }\n\nMessage:\n${formData.message}`
+      );
+      window.location.href = `mailto:${RECEIVE_EMAIL}?subject=${subject}&body=${body}`;
+      return;
+    }
+
+    const params = {
+      from_name: formData.fullName || formData.email,
+      from_email: formData.email,
+      company: formData.company || "-",
+      message: formData.message,
+      sent_at: new Date().toLocaleString(),
+      source_page: window.location.href,
+      // optional: to_email if template uses it
+      to_email: RECEIVE_EMAIL,
+    };
+
+    try {
+      await emailjs.send(SERVICE_ID, CONTACT_TEMPLATE_ID, params, PUBLIC_KEY);
+      showToast("success", "✅ Message sent — I'll reply soon.");
+      reset();
+      // OPTIONAL: if you later create auto-reply template, you can call it here
+      // try { await emailjs.send(SERVICE_ID, AUTO_REPLY_TEMPLATE_ID, { to_email: formData.email, ... }, PUBLIC_KEY); } catch(e){}
+    } catch (err) {
+      console.error("EmailJS send error:", err);
+      showToast(
+        "error",
+        "⚠️ Sending failed — try mail client or check console."
+      );
+    }
+  }
+
+  // -----------------------
+  // Form submit wrapper
+  // -----------------------
+  const onSubmit = (data) => {
+    sendContactEmail(data);
+  };
+
+  // -----------------------
+  // UI
+  // -----------------------
   return (
-    <div className="w-full bg-[#f8edeb] p-10">
-      <div className="pt-18">
-        <h1 className="font-bold text-8xl" id="contact-heading">
-          It's Time To Work Together
-        </h1>
-        <p className="font-medium mt-5 text-3xl">
-          Let’s Create Something That Matters..{" "}
-        </p>
-        <hr className="mt-8 text-gray-600" />
-      </div>
-      {/* //? contact-review section */}
-      <div className="flex items-start w-full gap-10 justify-between mt-10">
-        {/* //? my section */}
-        <div className="my-section w-1/2 h-full">
-          <div className="flex items-start justify-between gap-3 box-border">
-            <div className="my-card w-64 h-90">
-              <img
-                src="/image-2.png"
-                alt="kanishq-sodhani-profile-image"
-                className="w-full h-full object-cover rounded-xl"
-              />
-            </div>
-            <div className="my-info-tech-stack w-2/3 h-full">
-              <div className="tech-stack flex items-center justify-start flex-wrap gap-3 mb-8">
-                {techStack.map((stack) => (
-                  <h4 className="text-sm font-light text-gray-600 px-3 py-2 rounded-xl bg-white/50 backdrop-blur-2xl cursor-default outline-1 outline-neutral-50/50  shadow-[inset_0px_0px_20px_-14px_rgba(0,0,0,0.75)] hover:shadow-[inset_0px_0px_20px_-14px_rgba(42,42,42,0.75)]">
-                    {stack}
-                  </h4>
-                ))}
+    <div className="w-full bg-[#f8f9fb] min-h-screen py-12 px-6">
+      {/* toast */}
+      {toast && (
+        <div
+          className={`fixed right-6 top-6 z-50 px-4 py-2 rounded-md shadow-lg ${
+            toast.type === "success"
+              ? "bg-emerald-600 text-white"
+              : "bg-rose-500 text-white"
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {toast.text}
+        </div>
+      )}
+
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left profile (UPDATED) */}
+          <div className="w-full lg:w-1/2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="w-28 h-28 rounded-xl overflow-hidden bg-slate-200 shrink-0">
+                {/* replace src as needed */}
+                <img
+                  src="/people/kanishq-sodhani.png"
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div className="my-info w-fit text-left tracking-wide">
-                <h2 className="">
-                  <span className="font-semibold text-3xl"> Hi,</span> I’m{" "}
-                  <span className="bg-white/50 backdrop-blur-3xl shadow-[inset_0px_0px_20px_-14px_rgba(0,0,0,0.75)] italic p-1 rounded-sm">
-                    {" "}
-                    Kanishq — a Frontend Engineer
-                  </span>{" "}
-                  who loves turning ideas into smooth, beautiful, and functional
-                  digital experiences. I specialize in building modern
-                  interfaces, thoughtful user flows, and clean design systems
-                  that feel as good as they look.
-                </h2>
-                <h2 className="mt-2">
-                  I’m always learning, improving, and finding better ways to
-                  solve problems. My goal isn’t just to write code — it’s to
-                  collaborate, understand people, and build things that
-                  genuinely help users.
-                </h2>
+
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold text-slate-900">
+                  Kanishq Sodhani
+                </h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Frontend Engineer — polished UI & delightful UX
+                </p>
+
+                {/* Tech pills */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {["React", "Node", "Tailwind", "JavaScript"].map((t) => (
+                    <span
+                      key={t}
+                      className="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 text-slate-800"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* FULL INTRODUCTION (added back) */}
+                <div className="mt-4 text-sm text-slate-700 space-y-2 leading-relaxed">
+                  <h2 className="">
+                    <span className="font-semibold text-3xl"> Hi,</span> I’m{" "}
+                    <span className="bg-white/50 backdrop-blur-3xl shadow-[inset_0px_0px_20px_-14px_rgba(0,0,0,0.75)] italic p-1 rounded-sm">
+                      {" "}
+                      Kanishq — a Frontend Engineer
+                    </span>{" "}
+                    who loves turning ideas into smooth, beautiful, and
+                    functional digital experiences. I specialize in building
+                    modern interfaces, thoughtful user flows, and clean design
+                    systems that feel as good as they look.
+                  </h2>
+                  <h2 className="mt-2">
+                    I’m always learning, improving, and finding better ways to
+                    solve problems. My goal isn’t just to write code — it’s to
+                    collaborate, understand people, and build things that
+                    genuinely help users.
+                  </h2>
+                </div>
+
+                {/* Social icons: larger, outlined, hover -> rose */}
+                <div className="mt-6 flex items-center gap-3">
+                  {/* LinkedIn */}
+                  <a
+                    href="https://www.linkedin.com/in/kanishqsodhani"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="LinkedIn"
+                    className="group inline-flex items-center justify-center w-14 h-14 rounded-full border-2 border-slate-200 bg-white/60 hover:border-rose-400 transition"
+                  >
+                    <MagneticSpan>
+                      <FaLinkedinIn className="w-4 h-4 text-slate-800 transition-colors duration-200 group-hover:text-rose-500" />
+                    </MagneticSpan>
+                  </a>
+
+                  {/* GitHub */}
+                  <a
+                    href="https://github.com/kanishq-17"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="GitHub"
+                    className="group inline-flex items-center justify-center w-14 h-14 rounded-full border-2 border-slate-200 bg-white/60 hover:border-rose-400 transition"
+                  >
+                    <MagneticSpan>
+                      <IoLogoGithub className="w-4 h-4 text-slate-800 transition-colors duration-200 group-hover:text-rose-500" />
+                    </MagneticSpan>
+                  </a>
+
+                  {/* Twitter / X */}
+                  <a
+                    href="https://twitter.com/yourhandle"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Twitter"
+                    className="group inline-flex items-center justify-center w-14 h-14 rounded-full border-2 border-slate-200 bg-white/60 hover:border-rose-400 transition"
+                  >
+                    <MagneticSpan>
+                      <FaXTwitter className="w-4 h-4 text-slate-800 transition-colors duration-200 group-hover:text-rose-500" />
+                    </MagneticSpan>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-          <div className="social-accounts mt-10 flex justify-start items-center gap-5">
-            {/* LinkedIn with magnetic effect */}
-            <Link to="https://www.linkedin.com/in/kanishqsodhani">
-              <MagneticSpan className="bg-transparent ">
-                <FaLinkedinIn />
-              </MagneticSpan>
-            </Link>
 
-            {/* GitHub with magnetic effect */}
-            <Link to="https://github.com/kanishq-17">
-              <MagneticSpan className="bg-transparent">
-                <IoLogoGithub />
-              </MagneticSpan>
-            </Link>
+          {/* Right form (unchanged) */}
+          <div className="w-full lg:w-1/2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+            <h2 className="text-2xl font-bold mb-2">
+              Let’s build something together
+            </h2>
+            <p className="text-sm text-slate-600 mb-6">
+              Drop a message — I'll reply in 1-2 business days.
+            </p>
 
-            {/* X / Twitter with magnetic effect */}
-            <Link to="">
-              <MagneticSpan className="bg-transparent">
-                <FaXTwitter />
-              </MagneticSpan>
-            </Link>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-slate-500">Full name</label>
+                  <input
+                    {...register("fullName", { required: "Name is required" })}
+                    className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    placeholder="Your name"
+                  />
+                  {errors.fullName && (
+                    <p className="text-rose-500 text-sm mt-1">
+                      {errors.fullName.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-500">Company</label>
+                  <input
+                    {...register("company")}
+                    className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    placeholder="Company (optional)"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-xs text-slate-500">Email</label>
+                  <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+\.\S+$/,
+                        message: "Enter a valid email",
+                      },
+                    })}
+                    className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    placeholder="you@company.com"
+                  />
+                  {errors.email && (
+                    <p className="text-rose-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-xs text-slate-500">Message</label>
+                  <textarea
+                    {...register("message", {
+                      required: "Message is required",
+                    })}
+                    className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 min-h-[140px]"
+                    placeholder="Tell me about your project..."
+                  />
+                  {errors.message && (
+                    <p className="text-rose-500 text-sm mt-1">
+                      {errors.message.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`px-5 py-3 rounded-lg font-medium transition cursor-pointer ${
+                    isSubmitting
+                      ? "bg-slate-300 text-slate-600 cursor-not-allowed"
+                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                  }`}
+                >
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </button>
+
+                {/* fallback: open mail client */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    // grab form fields (not ideal but fallback)
+                    const name =
+                      document.querySelector('input[name="fullName"]')?.value ||
+                      "";
+                    const email =
+                      document.querySelector('input[name="email"]')?.value ||
+                      "";
+                    const company =
+                      document.querySelector('input[name="company"]')?.value ||
+                      "";
+                    const message =
+                      document.querySelector('textarea[name="message"]')
+                        ?.value || "";
+                    const subject = encodeURIComponent(
+                      `Contact from ${name || email}`
+                    );
+                    const body = encodeURIComponent(
+                      `Name: ${name}\nEmail: ${email}\nCompany: ${company}\n\nMessage:\n${message}`
+                    );
+                    window.location.href = `mailto:${RECEIVE_EMAIL}?subject=${subject}&body=${body}`;
+                  }}
+                  className="px-4 py-3 rounded-lg bg-slate-100 text-slate-800 cursor-pointer"
+                >
+                  Open Mail Client
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        {/* //? contact section */}
-        <div className="contact-section w-1/2 h-full">
-          <form noValidate>
-            <div className="flex justify-between items-center gap-5">
-              <div className="w-1/2">
-                <label htmlFor="fullName" className="text-xs text-gray-500">
-                  FULL NAME
-                </label>
-                <br />
-                <input
-                  type="text"
-                  placeholder="Kanishq Sodhani"
-                  id="fullName"
-                  {...register("fullName", { required: "Name is required" })}
-                  className="w-full my-3 outline-none text-lg text-gray-800"
-                />
-                {errors.fullName && (
-                  <p className="text-red-500">{errors.fullName.message}</p>
-                )}
-                <hr className="" />
-              </div>
-              <div className="w-1/2">
-                <label htmlFor="company" className="text-xs text-gray-500">
-                  COMPANY
-                </label>
-                <br />
-                <input
-                  type="text"
-                  placeholder="Rocketship"
-                  id="company"
-                  {...register("company")}
-                  className="w-full my-3 outline-none text-lg text-gray-800"
-                />
-                <hr />
-              </div>
-            </div>
-            <div className="my-5">
-              <label htmlFor="email" className="text-xs text-gray-500">
-                EMAIL
-              </label>
-              <br />
-              <input
-                type="text"
-                placeholder="try.kanishq@gmail.com"
-                id="email"
-                {...register("email", { required: "Email is required" })}
-                className="w-full my-3 outline-none text-lg text-gray-800"
-              />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
-              <hr />
-            </div>
-            <div>
-              <label htmlFor="message" className="text-xs text-gray-500">
-                MESSAGE
-              </label>
-              <br />
-              <textarea
-                type="text"
-                placeholder="Tell me about project"
-                id="message"
-                {...register("message", { required: "Message is required" })}
-                className="w-full my-3 outline-none text-lg text-gray-800 min-h-8 max-h-32"
-              />
-              <hr />
-            </div>
-            <button
-              onClick={handleSubmit(onFormSubmit)}
-              disabled={isSubmitting}
-              type="submit"
-              className="mt-10 mb-5 text-lg font-light cursor-pointer"
-            >
-              Send Message
-            </button>
-            <hr className="w-1/3" />
-          </form>
+
+        {/* small footer note */}
+        <div className="mt-8 text-sm text-slate-500">
+          <p>
+            By sending this message you agree to be contacted. No spam. For
+            urgent matters email directly at{" "}
+            <a className="text-indigo-600" href={`mailto:${RECEIVE_EMAIL}`}>
+              {RECEIVE_EMAIL}
+            </a>
+            .
+          </p>
         </div>
       </div>
+
+      {/* CSS for simple animation */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn .35s ease-out; }
+      `}</style>
     </div>
   );
 }
