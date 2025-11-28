@@ -277,9 +277,7 @@ const CenterPage = () => {
         >
           Hey, I'm Kanishq
           <br />
-          <span className="text-gray-800">
-            I Design, Code & Build Products
-          </span>
+          <span className="text-gray-800">I Design, Code & Build Products</span>
         </h1>
 
         {/* Roles + badges */}
@@ -357,7 +355,7 @@ const CenterPage = () => {
             <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
               <div className="inline-flex items-center gap-2 bg-neutral-800/40 px-3 py-1 rounded-full text-[0.65rem] mb-4">
                 <MdOutlinePeopleAlt />
-                <span>People words about me</span>
+                <span>People I’ve Worked With</span>
               </div>
 
               <div className="flex items-center gap-3 my-4">
@@ -429,7 +427,7 @@ const CenterPage = () => {
                     </button>
                     <div>
                       <div className="font-medium text-neutral-100">
-                        Rolling in the Deep
+                        Pussypodium
                       </div>
                       <div className="text-xs text-neutral-500">
                         beat · phonk
