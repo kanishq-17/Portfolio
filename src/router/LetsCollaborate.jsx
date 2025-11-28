@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+// LetsCollaborate.jsx
+import React, { useEffect, useState, useRef } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 import { FaLinkedinIn } from "react-icons/fa";
-import { BsPlusLg } from "react-icons/bs";
-import { IoReturnDownBack } from "react-icons/io5";
-import { IoReturnDownForward } from "react-icons/io5";
+import { IoReturnDownBack, IoReturnDownForward } from "react-icons/io5";
 import { CiSaveUp2 } from "react-icons/ci";
+import { IoLogoGithub } from "react-icons/io";
+import { FaXTwitter } from "react-icons/fa6";
 
-import { TbMinus } from "react-icons/tb";
-import { TbMinusVertical } from "react-icons/tb";
+// small helper for classes (no extra dependency)
+const cx = (...args) => args.filter(Boolean).join(" ");
 
 const LetsCollaborate = () => {
+  // sample reviewers (kept same)
   const [reviewUser] = useState([
     {
-      img: "/mayank-pareek.png",
+      img: "/people/mayank-pareek.png",
       name: "Mayank Pareek",
       title: "3D Artist",
       linkedIn: "",
-      description:
-        "Creative 3D artist skilled in Blender, modeling, rendering, and visual storytelling.",
       comments:
         "Kanishq built a complete full-stack car model website for my 3D assets. The UI was clean, the workflow smooth, and he understood every requirement perfectly. Working with him was effortless — truly reliable and fast.",
     },
@@ -28,38 +28,30 @@ const LetsCollaborate = () => {
       name: "Vinit Modi",
       title: "Business Analyst",
       linkedIn: "https://www.linkedin.com/in/vinit-modi-22a458222",
-      description:
-        "Business analyst with strong problem-solving skills and Red Hat certification expertise.",
       comments:
         "We collaborated on the MERN project ‘Rasoi Se’. Kanishq handled the frontend and interactions brilliantly. His attention to detail, pixel-perfect components, and debugging skills elevated the entire project.",
     },
     {
-      img: "/rajat-sen.png",
+      img: "/people/rajat-sen.png",
       name: "Rajat Sen",
       title: "Full Stack Dev",
       linkedIn: "https://www.linkedin.com/in/rajatsen13",
-      description:
-        "Full-stack developer with high logical thinking and strong application-building skills.",
       comments:
         "We teamed up during a hackathon where Kanishq built an impressive UI flow and frontend architecture. His quick thinking, adaptability, and design sense helped us ship a solid product under pressure.",
     },
     {
-      img: "/anupam-mishra.png",
+      img: "/people/anupam-mishra.png",
       name: "Anupam Mishra",
       title: "Data Engineer",
       linkedIn: "https://www.linkedin.com/in/anupam--mishra",
-      description:
-        "Data engineer at PwC with expertise in analytics and scalable data solutions.",
       comments:
         "Kanishq created a polished frontend for my startup DataSquare. The animations, GSAP work, and modern UI elevated the brand identity. His communication and delivery speed were excellent throughout.",
     },
     {
-      img: "/ritik-1.png",
+      img: "/people/ritik.png",
       name: "Ritik Raj Singh",
       title: "Front End Dev",
       linkedIn: "https://www.linkedin.com/in/ritik-raj-singh-92b018301",
-      description:
-        "Frontend developer with strong React skills and exploring full-stack development.",
       comments:
         "We’ve worked together on a full-stack LMS frontend and continue to collaborate. Kanishq’s structure, component design, and UI logic are consistently high-quality. He’s someone you can rely on for clean and efficient code.",
     },
@@ -80,8 +72,7 @@ const LetsCollaborate = () => {
     },
     {
       heading: "Requirements & Preferences",
-      title:
-        "Toggle options to share how you'd like this collaboration to work.",
+      title: "Toggle options to share how you'd like this collaboration to work.",
     },
     {
       heading: "Final Notes",
@@ -93,53 +84,37 @@ const LetsCollaborate = () => {
     {
       id: 0,
       question: "What type of clients do you work with?",
-      answer: `I work with startups, small-to-medium businesses, founders, product teams, and creators who need clear, modern web interfaces — everything from marketing sites and landing pages to dashboards and internal tools. I also collaborate with agencies and technical leads who need a reliable frontend partner.`,
+      answer: `I work with startups, small-to-medium businesses, founders, product teams, and creators who need clear, modern web interfaces — everything from marketing sites and landing pages to dashboards and internal tools.`,
       isOpen: true,
     },
     {
       id: 1,
       question: "How big does my project need to be?",
-      answer: `There’s no minimum size — I take projects ranging from single-page landing pages to multi-screen dashboards and full product builds. If it’s well-defined (even small), I’ll give a realistic plan; if the scope is loose, we’ll scope it together in a short discovery call.`,
+      answer: `There’s no minimum size — I take projects ranging from single-page landing pages to multi-screen dashboards and full product builds.`,
       isOpen: false,
     },
     {
       id: 2,
       question: "How much does a website cost?",
-      answer: `Costs depend on scope and complexity. As a rough guideline (INR):
-
-Small landing page: ₹8k–₹25k
-
-Multi-page brochure site: ₹25k–₹75k
-
-Complex Webflow site with CMS and interactions: ₹75k+
-If you prefer React/Tailwind instead of Webflow, budgets shift depending on integrations and backend needs — I’ll give a tailored estimate after a quick brief.`,
+      answer: `Costs depend on scope and complexity. Small landing page: ₹8k–₹25k, Multi-page: ₹25k–₹75k, Complex: ₹75k+`,
       isOpen: false,
     },
     {
       id: 3,
       question: "How much time does it take to create a website?",
-      answer: `Typical timelines:
-
-Small landing page: 2–7 days
-
-Multi-page site (5–10 pages): 1–3 weeks
-
-Complex site with CMS & interactions: 3–6 weeks
-Timelines depend on approvals, assets (copy/design), and integrations. I share a clear schedule during scoping and give milestone delivery dates so you know what to expect.`,
+      answer: `Typical timelines: Small: 2–7 days, Multi-page: 1–3 weeks, Complex: 3–6 weeks`,
       isOpen: false,
     },
     {
       id: 4,
       question: "Can you work with my existing team?",
-      answer: `Absolutely.
-I can collaborate with designers, backend developers, product managers, or founders — in async or real-time communication.`,
+      answer: `Absolutely. I can collaborate with designers, backend developers, product managers, or founders — async or real-time.`,
       isOpen: false,
     },
     {
       id: 5,
       question: "Do you offer revisions?",
-      answer: `Yes.
-I include milestone review points and feedback rounds to ensure we align on design, functionality and overall experience.`,
+      answer: `Yes. I include milestone review points and feedback rounds to ensure alignment.`,
       isOpen: false,
     },
   ]);
@@ -147,7 +122,17 @@ I include milestone review points and feedback rounds to ensure we align on desi
   const [formCounter, setFormCounter] = useState(0);
   const [reviewCounter, setReviewCounter] = useState(0);
 
-  const { register, handleSubmit, reset, formState } = useForm({
+  // react-hook-form with validation onChange (so isValid works live)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    trigger,
+    formState: { errors, isSubmitting, isValid },
+    watch,
+  } = useForm({
+    mode: "onChange", // live validation so isValid updates
     defaultValues: {
       fullname: "",
       email: "",
@@ -159,543 +144,596 @@ I include milestone review points and feedback rounds to ensure we align on desi
       projectType: "",
       budgetRange: "",
       timeline: "",
-      isDesignReady: "",
-      needBackendSupport: "",
-      isProjectAtFinal: "",
-      isDeadlineFixed: "",
+      isDesignReady: false,
+      needBackendSupport: false,
+      isProjectAtFinal: false,
+      isDeadlineFixed: false,
       detailedMessage: "",
     },
   });
-  const { errors, isSubmitting } = formState;
 
-  const submitForm = async (data) => {
-    console.log("Form Data:", data);
-    reset();
-  };
-
-  console.log(formCounter);
-
+  // cycle reviews
   useEffect(() => {
-    let interval = setInterval(() => {
-      setReviewCounter((prev) => (prev + 1) % reviewUser.length);
-    }, 5000);
-
+    const interval = setInterval(
+      () => setReviewCounter((prev) => (prev + 1) % reviewUser.length),
+      5000
+    );
     return () => clearInterval(interval);
-  }, []);
+  }, [reviewUser.length]);
 
   const showQna = (id) => {
     setQna((prev) =>
       prev.map((item) =>
-        item.id === id
-          ? { ...item, isOpen: !item.isOpen }
-          : { ...item, isOpen: false }
+        item.id === id ? { ...item, isOpen: !item.isOpen } : { ...item, isOpen: false }
       )
     );
   };
 
+  // toast
+  const [toast, setToast] = useState(null);
+  const toastRef = useRef(null);
+  function showToast(type, text) {
+    setToast({ type, text });
+    if (toastRef.current) clearTimeout(toastRef.current);
+    toastRef.current = setTimeout(() => setToast(null), 3000);
+  }
+
+  // handle final submit (replace with EmailJS or API later)
+  const submitForm = async (data) => {
+    try {
+      // final validation before submit to be safe
+      const ok = await trigger([
+        "fullname",
+        "email",
+        "projectTitle",
+        "building",
+        "projectType",
+        "budgetRange",
+        "timeline",
+      ]);
+      if (!ok) {
+        showToast("error", "Please fill required fields before submitting.");
+        return;
+      }
+
+      // OPTIONAL: send to server / EmailJS here
+      // console.log("Form submitted:", data);
+      showToast("success", "✅ Request submitted. I will reply soon.");
+      reset();
+      setFormCounter(0);
+    } catch (err) {
+      console.error(err);
+      showToast("error", "⚠️ Submission failed. Try again.");
+    }
+  };
+
+  // mapping of step -> required fields to validate when clicking Next
+  const stepRequiredFields = {
+    0: ["fullname", "email", "projectTitle"], // Step 1
+    1: ["building"], // Step 2
+    2: ["projectType", "budgetRange", "timeline"], // Step 3
+    3: [], // Step 4 toggles optional
+    4: [], // Step 5 final message
+  };
+
+  // Next handler that validates current step required fields before allowing next
+  const handleNext = async () => {
+    const fieldsToCheck = stepRequiredFields[formCounter] || [];
+    if (fieldsToCheck.length > 0) {
+      const valid = await trigger(fieldsToCheck);
+      if (!valid) {
+        // validation failed — do not advance; errors will show inline
+        showToast("error", "Please fill required fields in this step.");
+        return;
+      }
+    }
+    // all good -> advance
+    setFormCounter((prev) => Math.min(prev + 1, 4));
+    // scroll to top of form area for better UX on mobile
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Back handler
+  const handleBack = () => {
+    setFormCounter((prev) => Math.max(prev - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const progressItems = [0, 1, 2, 3, 4];
+
+  // KEYDOWN handler: prevent Enter from submitting the form unless on final step
+  const onFormKeyDown = (e) => {
+    if (e.key === "Enter") {
+      // allow Enter to submit only when on final step (formCounter === 4)
+      if (formCounter < 4) {
+        e.preventDefault();
+        // optionally move focus to next field instead
+      }
+    }
+  };
+
   return (
-    <div className="w-full bg-linear-to-br from-[#fff8ef] to-[#f5eaff] p-10">
-      <div className="pt-18">
-        <h1 className="font-bold text-black text-8xl">
-          <span className="">Have Design Project</span> <br />
-          <span className="text-7xl">and need help?</span>
-        </h1>
-        <hr className="text-gray-300 mt-10" />
-      </div>
-
-      {/* //! review-qna and contact section */}
-      <div className="flex justify-between gap-10 mt-10">
-        {/* //! review-qna section */}
-        <div className="w-[60%]">
-          {/* //? review section */}
-          <div className="review-section flex items-start gap-5 justify-start">
-            {/* //* review-user-card */}
-            <div className="review-user-card w-sm h-full rounded-3xl relative">
-              <div className="h-full w-full z-10">
-                <img
-                  src={reviewUser[reviewCounter].img}
-                  alt=""
-                  className="w-full h-full object-cover rounded-3xl"
-                />
-              </div>
-              <div className="w-full z-20 absolute bottom-0 bg-white/20 backdrop-blur-sm  rounded-b-3xl p-2 shadow-[0px_-5px_5px_0px_rgba(255,255,255,0.20)]">
-                <div className="flex justify-start items-center gap-3">
-                  <h2 className="font-semibold text-xl">
-                    {reviewUser[reviewCounter].name}
-                  </h2>
-                  <Link to={reviewUser[reviewCounter].linkedIn}>
-                    <div className="text-white rounded-xs p-0.5 bg-blue-600 text-center cursor-pointer">
-                      <FaLinkedinIn />
-                    </div>
-                  </Link>
-                </div>
-
-                <h4 className="font-medium text-sm mb-2">
-                  {reviewUser[reviewCounter].title}
-                </h4>
-                <p className="font-normal text-xs mb-1">
-                  {reviewUser[reviewCounter].description}
-                </p>
-              </div>
-            </div>
-            {/* //* reviews */}
-            <div className="reviews w-full h-82 flex ">
-              <p className="font-light text-xl pt-40 text-black">
-                {reviewUser[reviewCounter].comments}
-              </p>
-            </div>
-          </div>
-          {/* //? qna section */}
-          <div className="qna section w-full mt-14 text-black">
-            {qna.map((qa) => (
-              <div key={qa.id}>
-                <div
-                  onClick={() => showQna(qa.id)}
-                  aria-expanded={qa.isOpen}
-                  className="flex items-center justify-between cursor-pointer y"
-                >
-                  <h4 className="font-semibold text-xl">{qa.question}</h4>
-                  <div className="text-4xl relative">
-                    <span>
-                      <TbMinus />
-                    </span>
-                    <span
-                      className={`absolute top-0 transition-all duration-300 ${
-                        qa.isOpen ? "-rotate-90" : "rotate-0"
-                      }`}
-                    >
-                      <TbMinusVertical />
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className={`mt-4 text-lg font-light transition-all duration-300 ${
-                    qa.isOpen
-                      ? "opacity-100 max-h-96"
-                      : "opacity-0 max-h-0 overflow-hidden"
-                  }`}
-                >
-                  <p>{qa.answer}</p>
-                </div>
-                <hr className="my-4" />
-              </div>
-            ))}
-          </div>
+    <div className="w-full min-h-screen bg-linear-to-br from-[#fff8ef] to-[#f5eaff] p-6 md:p-10 lg:p-14">
+      {/* Toast */}
+      {toast && (
+        <div
+          className={cx(
+            "fixed right-6 top-6 z-50 px-4 py-2 rounded-md shadow-lg",
+            toast.type === "success" ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+          )}
+        >
+          {toast.text}
         </div>
-        {/* //! contact section */}
-        <div className="w-[40%] bg-pink-50/50 border border-white/50 backdrop-blur-lg shadow-lg rounded-md h-134 p-5 relative">
-          <div className="w-full flex justify-center items-center gap-3 my-5 mb-12">
-            <div
-              className={`rounded-full w-6 h-1 ${
-                formCounter === 0
-                  ? "bg-white shadow shadow-gray-600/30"
-                  : "bg-neutral-400/30"
-              }`}
-            ></div>
-            <div
-              className={`rounded-full w-6 h-1 ${
-                formCounter === 1
-                  ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400/30"
-              }`}
-            ></div>
-            <div
-              className={`rounded-full w-6 h-1 ${
-                formCounter === 2
-                  ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400/30"
-              }`}
-            ></div>
-            <div
-              className={`rounded-full w-6 h-1 ${
-                formCounter === 3
-                  ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400/30"
-              }`}
-            ></div>
-            <div
-              className={`rounded-full w-6 h-1 ${
-                formCounter === 4
-                  ? "bg-white shadow shadow-gray-600/50"
-                  : "bg-neutral-400/30"
-              }`}
-            ></div>
-          </div>
-          <div className="mb-4">
-            <h1 className="font-bold text-2xl">
-              {formHeading[formCounter].heading}
-            </h1>
-            <p className="text-md mt-2">{formHeading[formCounter].title}</p>
-          </div>
-          <div className="mt-10">
-            {/* //! FORM - PART 1 - USER INFO*/}
-            {formCounter === 0 && (
-              <form noValidate onSubmit={handleSubmit(submitForm)}>
-                <div className="flex w-full items-center justify-between gap-5">
-                  <div id="row-fullname" className="w-1/2">
-                    <label htmlFor="fullname" className="text-sm">
-                      FULL NAME
-                    </label>
-                    <br />
-                    <input
-                      id="fullname"
-                      type="text"
-                      placeholder="Kanishq Sodhani"
-                      {...register("fullname", {
-                        required: "name is required",
-                      })}
-                      className="text-lg my-2 outline-none"
-                    />
-                    {errors.fullname && (
-                      <p className="text-red-500">{errors.fullname.message}</p>
+      )}
+
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl leading-tight text-slate-900">
+            Have a design project <br /> and need help?
+          </h1>
+          <p className="mt-4 text-slate-700 max-w-2xl">
+            Fill a quick brief — I’ll review and respond with a plan & estimate. You can
+            also email directly at <strong>try.kanishq@gmail.com</strong>.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left: Reviews + QnA (col-span 7/12) */}
+          <div className="lg:col-span-7 space-y-8">
+            {/* Review card */}
+            <div className="flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-md p-5 border border-slate-100">
+              <div className="w-full md:w-56 h-44 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
+                <img src={reviewUser[reviewCounter].img} alt="" className="w-full h-full object-cover" />
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold">{reviewUser[reviewCounter].name}</h3>
+                    <p className="text-sm text-slate-600">{reviewUser[reviewCounter].title}</p>
+                  </div>
+                  <div>
+                    {reviewUser[reviewCounter].linkedIn && (
+                      <Link to={reviewUser[reviewCounter].linkedIn} target="_blank" rel="noreferrer" className="text-slate-700 hover:text-indigo-600">
+                        <FaLinkedinIn />
+                      </Link>
                     )}
-                    <hr />
-                  </div>
-
-                  <div id="row-company/brand" className="w-1/2">
-                    <label htmlFor="company" className="text-sm">
-                      COMPANY
-                    </label>
-                    <br />
-                    <input
-                      id="company"
-                      type="text"
-                      placeholder="OpenAI"
-                      {...register("company")}
-                      className="text-lg my-2 outline-none"
-                    />
-                    <hr />
                   </div>
                 </div>
 
-                <div id="row-email" className="w-full my-4">
-                  <label htmlFor="email" className="text-sm">
-                    EMAIL ADDRESS
-                  </label>
-                  <br />
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="try.kanishq@gmail.com"
-                    {...register("email", {
-                      required: "email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Invalid email",
-                      },
-                    })}
-                    className="text-lg my-2 outline-none"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500">{errors.email.message}</p>
-                  )}
-                  <hr />
-                </div>
+                <p className="mt-4 text-slate-700">{reviewUser[reviewCounter].comments}</p>
+              </div>
+            </div>
 
-                <div id="row-projectTitle" className="w-full">
-                  <label htmlFor="projectTitle" className="text-sm">
-                    PROJECT TITLE
-                  </label>
-                  <br />
-                  <input
-                    id="projectTitle"
-                    type="text"
-                    placeholder="Name your project"
-                    {...register("projectTitle")}
-                    className="text-lg my-2 outline-none"
-                  />
-                  <hr />
-                </div>
-              </form>
-            )}
-
-            {/* //! FORM - PART 2 - INFO ABOUT PROJECT*/}
-            {formCounter === 1 && (
-              <form noValidate>
-                <div id="row-whatYouBuilding" className="w-full">
-                  <label htmlFor="building" className="text-sm">
-                    WHAT ARE YOU BUILDING
-                  </label>
-                  <br />
-                  <input
-                    id="building"
-                    type="text"
-                    placeholder="Landing page, Dashboard, Website redesign, App UI…"
-                    {...register("building")}
-                    className="text-lg my-2 outline-none w-full"
-                  />
-                  <hr />
-                </div>
-
-                <div id="row-whatProblemSolve" className="w-full my-4">
-                  <label htmlFor="problemSolve" className="text-sm">
-                    WHAT PROBLEM WILL IT SOLVE
-                  </label>
-                  <br />
-                  <input
-                    id="problemSolve"
-                    type="text"
-                    placeholder="Improve user flow, modernize UI"
-                    {...register("problemSolve")}
-                    className="text-lg my-2 outline-none w-full"
-                  />
-                  <hr />
-                </div>
-
-                <div id="row-inspirationLink" className="w-full">
-                  <label htmlFor="inspirationLink" className="text-sm">
-                    ANY REFERENCE OR INSPIRATION
-                  </label>
-                  <br />
-                  <input
-                    id="inspirationLink"
-                    type="text"
-                    placeholder="Figma, Website link, Inspiration link... "
-                    {...register("inspirationLink")}
-                    className="text-lg my-2 outline-none w-full"
-                  />
-                  <hr />
-                </div>
-              </form>
-            )}
-
-            {/* //! FORM - PART 3 - DROPDOWN MENUS */}
-            {formCounter === 2 && (
-              <form noValidate>
-                <div id="row-projectType" className="w-full mb-4">
-                  <label htmlFor="projectType" className="text-sm">
-                    Project Type
-                  </label>
-                  <br />
-                  <select
-                    id="projectType"
-                    {...register("projectType")}
-                    className="text-lg my-2 outline-none w-full"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select project type
-                    </option>
-                    <option value="Website">Website</option>
-                    <option value="Dashboard Interface">
-                      Dashboard Interface
-                    </option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Web App">Web App</option>
-                    <option value="Automation / AI Tool">
-                      Automation / AI Tool
-                    </option>
-                    <option value="Something Else">Something Else</option>
-                  </select>
-                  <hr />
-                </div>
-
-                <div id="row-budgetRange" className="w-full mb-4">
-                  <label htmlFor="budgetRange" className="text-sm">
-                    Budget Range
-                  </label>
-                  <br />
-                  <select
-                    id="budgetRange"
-                    {...register("budgetRange")}
-                    className="text-lg my-2 outline-none w-full"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select budget range
-                    </option>
-                    <option value="Under ₹10,000">Under ₹10,000</option>
-                    <option value="₹10,000 – ₹25,000">₹10,000 – ₹25,000</option>
-                    <option value="₹25,000 – ₹75,000">₹25,000 – ₹75,000</option>
-                    <option value="₹75,000+">₹75,000+</option>
-                    <option value="Not sure yet">Not sure yet</option>
-                  </select>
-                  <hr />
-                </div>
-
-                <div id="row-timeline" className="w-full mb-4">
-                  <label htmlFor="timeline" className="text-sm">
-                    Timeline
-                  </label>
-                  <br />
-                  <select
-                    id="timeline"
-                    {...register("timeline")}
-                    className="text-lg my-2 outline-none w-full"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select timeline
-                    </option>
-                    <option value="1–2 Weeks">1–2 Weeks</option>
-                    <option value="2–4 Weeks">2–4 Weeks</option>
-                    <option value="1–2 Months">1–2 Months</option>
-                    <option value="Flexible">Flexible</option>
-                    <option value="Not sure">Not sure</option>
-                  </select>
-                  <hr />
-                </div>
-              </form>
-            )}
-
-            {/* //! FORM - PART 4 - TOGGLE QUESTIONS */}
-            {formCounter === 3 && (
-              <form noValidate>
-                <div
-                  id="row-isDesignReady"
-                  className="w-full mb-4 flex justify-between items-center"
-                >
-                  <label
-                    htmlFor="isDesignReady"
-                    className="font-medium text-xl"
-                    style={{ marginRight: "1.5rem" }}
-                  >
-                    Do you already have a design ready
-                  </label>
-                  <div className="toggle-container">
-                    <input
-                      type="checkbox"
-                      className="toggle-checkbox"
-                      id="isDesignReady"
-                      {...register("isDesignReady")}
-                    />
-                    <label className="toggle-switch" htmlFor="isDesignReady">
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-
-                <div
-                  id="row-needBackendSupport"
-                  className="w-full mb-4 flex justify-between items-center"
-                >
-                  <label
-                    htmlFor="needBackendSupport"
-                    className="font-medium text-xl"
-                    style={{ marginRight: "1.5rem" }}
-                  >
-                    Do you need backend support
-                  </label>
-                  <div className="toggle-container">
-                    <input
-                      type="checkbox"
-                      className="toggle-checkbox"
-                      id="needBackendSupport"
-                      {...register("needBackendSupport")}
-                    />
-                    <label
-                      className="toggle-switch"
-                      htmlFor="needBackendSupport"
+            {/* QnA */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+              <h4 className="text-lg font-semibold mb-4">Common questions</h4>
+              <div className="space-y-4">
+                {qna.map((qa) => (
+                  <div key={qa.id}>
+                    <button
+                      onClick={() => showQna(qa.id)}
+                      className="w-full text-left flex items-center justify-between py-3"
+                      aria-expanded={qa.isOpen}
                     >
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
+                      <div>
+                        <h5 className="font-medium text-base">{qa.question}</h5>
+                      </div>
+                      <div className="text-2xl">
+                        <span className={`${qa.isOpen ? "-rotate-90" : "rotate-0"} transition-transform`}>⮟</span>
+                      </div>
+                    </button>
 
-                <div
-                  id="row-isProjectAtFinal"
-                  className="w-full mb-4 flex justify-between items-center"
-                >
-                  <label
-                    htmlFor="isProjectAtFinal"
-                    className="font-medium text-xl"
-                    style={{ marginRight: "1.5rem" }}
-                  >
-                    Is the scope final or still evolving
-                  </label>
-                  <div className="toggle-container">
-                    <input
-                      type="checkbox"
-                      className="toggle-checkbox"
-                      id="isProjectAtFinal"
-                      {...register("isProjectAtFinal")}
-                    />
-                    <label className="toggle-switch" htmlFor="isProjectAtFinal">
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
+                    <div
+                      className={cx(
+                        "overflow-hidden transition-all duration-300",
+                        qa.isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                      )}
+                    >
+                      <p className="text-slate-700">{qa.answer}</p>
+                    </div>
 
-                <div
-                  id="row-isDeadlineFixed"
-                  className="w-full mb-4 flex justify-between items-center"
-                >
-                  <label
-                    htmlFor="isDeadlineFixed"
-                    className="font-medium text-xl"
-                    style={{ marginRight: "1.5rem" }}
-                  >
-                    Is your deadline fixed
-                  </label>
-                  <div className="toggle-container">
-                    <input
-                      type="checkbox"
-                      className="toggle-checkbox"
-                      id="isDeadlineFixed"
-                      {...register("isDeadlineFixed")}
-                    />
-                    <label className="toggle-switch" htmlFor="isDeadlineFixed">
-                      <span className="toggle-slider"></span>
-                    </label>
+                    <hr className="my-4" />
                   </div>
-                </div>
-              </form>
-            )}
-
-            {/* //! FORM - PART 5 - DETAILED MESSAGE */}
-            {formCounter === 4 && (
-              <form noValidate>
-                <div id="row-detailedMessage" className="w-full">
-                  <label htmlFor="detailedMessage" className="text-sm">
-                    Tell me more about your project
-                  </label>
-                  <br />
-                  <textarea
-                    id="detailedMessage"
-                    type="text"
-                    placeholder="Explain your idea, required features, your goals, or anything specific you want."
-                    {...register("detailedMessage")}
-                    className="text-lg my-2 outline-none w-full min-h-16  max-h-[180px]"
-                  />
-                  <hr />
-                </div>
-              </form>
-            )}
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="form-controller-btn w-lg flex justify-between items-center mt-5 absolute bottom-8">
-            <button
-              onClick={() =>
-                setFormCounter((prev) => (prev > 0 ? prev - 1 : prev))
-              }
-              className="previous font-medium flex items-center justify-around gap-2 outline-1 bg-white/30  outline-neutral-200 backdrop-blur-md px-2 py-2 rounded-lg cursor-pointer shadow-lg"
-            >
-              <span className="bg-black text-white rounded-md p-0.5">
-                <IoReturnDownBack />
-              </span>
-              <p>Back</p>
-            </button>
-            <button
-              disabled={isSubmitting}
-              onClick={() =>
-                setFormCounter((prev) => (prev < 4 ? prev + 1 : prev))
-              }
-              className={`next font-medium flex items-center justify-around gap-2 outline-1  backdrop-blur-md px-2 py-2 rounded-lg cursor-pointer shadow-lg ${
-                formCounter === 4
-                  ? "bg-blue-800/50 outline-indigo-300 text-white"
-                  : "bg-white/30 outline-neutral-200"
-              }`}
-            >
-              <span
-                className={` rounded-md p-0.5 ${
-                  formCounter === 4
-                    ? "bg-blue-600 text-white"
-                    : "bg-black text-white"
-                }`}
-              >
-                {formCounter === 4 ? <CiSaveUp2 /> : <IoReturnDownForward />}
-              </span>
-              <p>{formCounter === 4 ? "Submit" : "Next"}</p>
-            </button>
+
+          {/* Right: Multi-step form (col-span 5/12) */}
+          <div className="lg:col-span-5">
+            <div className="sticky top-6 space-y-6">
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md">
+                {/* Step progress */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    {progressItems.map((p) => (
+                      <div key={p} className="flex items-center gap-2">
+                        <div
+                          className={cx(
+                            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+                            formCounter === p ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-700"
+                          )}
+                        >
+                          {p + 1}
+                        </div>
+                        {/* small connecting line except last */}
+                        {p < progressItems.length - 1 && (
+                          <div className={cx("w-6 h-0.5", formCounter > p ? "bg-indigo-600" : "bg-slate-200")} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="text-sm text-slate-500">
+                    Step {formCounter + 1} / 5
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold">{formHeading[formCounter].heading}</h2>
+                  <p className="text-sm text-slate-600 mt-1">{formHeading[formCounter].title}</p>
+                </div>
+
+                <div className="mt-5">
+                  {/* FORM - single react-hook-form instance */}
+                  {/* Add onKeyDown to prevent Enter submitting early */}
+                  <form onSubmit={handleSubmit(submitForm)} onKeyDown={onFormKeyDown} noValidate>
+                    {/* Step 0: Basic Info */}
+                    {formCounter === 0 && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium">Full name *</label>
+                          <input
+                            {...register("fullname", { required: "Full name is required" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Kanishq Sodhani"
+                            type="text"
+                          />
+                          {errors.fullname && <p className="text-rose-500 text-sm mt-1">{errors.fullname.message}</p>}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Company / Brand</label>
+                          <input
+                            {...register("company")}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="OpenAI"
+                            type="text"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Email address *</label>
+                          <input
+                            {...register("email", {
+                              required: "Email is required",
+                              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
+                            })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="you@company.com"
+                            type="email"
+                          />
+                          {errors.email && <p className="text-rose-500 text-sm mt-1">{errors.email.message}</p>}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Project title *</label>
+                          <input
+                            {...register("projectTitle", { required: "Project title is required" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Name your project"
+                            type="text"
+                          />
+                          {errors.projectTitle && <p className="text-rose-500 text-sm mt-1">{errors.projectTitle.message}</p>}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 1: Project Overview */}
+                    {formCounter === 1 && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium">What are you building? *</label>
+                          <input
+                            {...register("building", { required: "This is required" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Landing page, Dashboard, App UI..."
+                            type="text"
+                          />
+                          {errors.building && <p className="text-rose-500 text-sm mt-1">{errors.building.message}</p>}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">What problem will it solve?</label>
+                          <input
+                            {...register("problemSolve")}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Improve UX, increase conversions..."
+                            type="text"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Reference / Inspiration (link)</label>
+                          <input
+                            {...register("inspirationLink")}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            placeholder="Figma / Website link"
+                            type="text"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Dropdowns - Project Type / Budget / Timeline */}
+                    {formCounter === 2 && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium">Project type *</label>
+                          <select
+                            {...register("projectType", { required: "Select project type" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Select project type
+                            </option>
+                            <option value="Website">Website</option>
+                            <option value="Dashboard Interface">Dashboard Interface</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="Web App">Web App</option>
+                            <option value="Automation / AI Tool">Automation / AI Tool</option>
+                            <option value="Something Else">Something Else</option>
+                          </select>
+                          {errors.projectType && <p className="text-rose-500 text-sm mt-1">{errors.projectType.message}</p>}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Budget range *</label>
+                          <select
+                            {...register("budgetRange", { required: "Select budget range" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Select budget range
+                            </option>
+                            <option value="Under ₹10,000">Under ₹10,000</option>
+                            <option value="₹10,000 – ₹25,000">₹10,000 – ₹25,000</option>
+                            <option value="₹25,000 – ₹75,000">₹25,000 – ₹75,000</option>
+                            <option value="₹75,000+">₹75,000+</option>
+                            <option value="Not sure yet">Not sure yet</option>
+                          </select>
+                          {errors.budgetRange && <p className="text-rose-500 text-sm mt-1">{errors.budgetRange.message}</p>}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium">Timeline *</label>
+                          <select
+                            {...register("timeline", { required: "Select timeline" })}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Select timeline
+                            </option>
+                            <option value="1–2 Weeks">1–2 Weeks</option>
+                            <option value="2–4 Weeks">2–4 Weeks</option>
+                            <option value="1–2 Months">1–2 Months</option>
+                            <option value="Flexible">Flexible</option>
+                            <option value="Not sure">Not sure</option>
+                          </select>
+                          {errors.timeline && <p className="text-rose-500 text-sm mt-1">{errors.timeline.message}</p>}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Toggle questions (boolean true/false) */}
+                    {formCounter === 3 && (
+                      <div className="space-y-4">
+                        <Controller
+                          control={control}
+                          name="isDesignReady"
+                          render={({ field: { value, onChange } }) => (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="font-medium">Do you already have a design ready?</label>
+                                <p className="text-sm text-slate-500">If yes, I can implement directly.</p>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => onChange(!value)}
+                                  className={cx(
+                                    "w-14 h-8 rounded-full p-1 transition",
+                                    value ? "bg-rose-500" : "bg-slate-200"
+                                  )}
+                                  aria-pressed={value}
+                                >
+                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                </button>
+                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                              </div>
+                            </div>
+                          )}
+                        />
+
+                        <Controller
+                          control={control}
+                          name="needBackendSupport"
+                          render={({ field: { value, onChange } }) => (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="font-medium">Do you need backend support?</label>
+                                <p className="text-sm text-slate-500">APIs, database, auth — I can help or integrate with your backend.</p>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => onChange(!value)}
+                                  className={cx(
+                                    "w-14 h-8 rounded-full p-1 transition",
+                                    value ? "bg-rose-500" : "bg-slate-200"
+                                  )}
+                                  aria-pressed={value}
+                                >
+                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                </button>
+                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                              </div>
+                            </div>
+                          )}
+                        />
+
+                        <Controller
+                          control={control}
+                          name="isProjectAtFinal"
+                          render={({ field: { value, onChange } }) => (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="font-medium">Is the scope final or still evolving?</label>
+                                <p className="text-sm text-slate-500">Final scopes help with precise estimates.</p>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => onChange(!value)}
+                                  className={cx(
+                                    "w-14 h-8 rounded-full p-1 transition",
+                                    value ? "bg-rose-500" : "bg-slate-200"
+                                  )}
+                                  aria-pressed={value}
+                                >
+                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                </button>
+                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                              </div>
+                            </div>
+                          )}
+                        />
+
+                        <Controller
+                          control={control}
+                          name="isDeadlineFixed"
+                          render={({ field: { value, onChange } }) => (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="font-medium">Is your deadline fixed?</label>
+                                <p className="text-sm text-slate-500">Fixed deadlines may need priority planning.</p>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => onChange(!value)}
+                                  className={cx(
+                                    "w-14 h-8 rounded-full p-1 transition",
+                                    value ? "bg-rose-500" : "bg-slate-200"
+                                  )}
+                                  aria-pressed={value}
+                                >
+                                  <span className={cx("block w-6 h-6 rounded-full bg-white transition-transform", value ? "translate-x-6" : "translate-x-0")} />
+                                </button>
+                                <span className="text-sm text-slate-600">{value ? "Yes" : "No"}</span>
+                              </div>
+                            </div>
+                          )}
+                        />
+                      </div>
+                    )}
+
+                    {/* Step 4: final message */}
+                    {formCounter === 4 && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium">Tell me more about your project</label>
+                          <textarea
+                            {...register("detailedMessage")}
+                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 min-h-[120px]"
+                            placeholder="Explain your idea, required features, your goals..."
+                          />
+                        </div>
+
+                        <div className="text-sm text-slate-500">
+                          You can also attach links to Figma, Drive, or examples in the message above.
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Controls (Back / Next / Submit) */}
+                    <div className="mt-6 flex items-center justify-between gap-3">
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:shadow-sm"
+                      >
+                        <IoReturnDownBack /> Back
+                      </button>
+
+                      {/* If last step -> show submit else next */}
+                      {formCounter < 4 ? (
+                        <button
+                          type="button"
+                          onClick={handleNext}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                        >
+                          Next <IoReturnDownForward />
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          disabled={!isValid || isSubmitting}
+                          className={cx(
+                            "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium",
+                            !isValid || isSubmitting
+                              ? "bg-slate-300 text-slate-600 cursor-not-allowed"
+                              : "bg-rose-600 text-white hover:bg-rose-700"
+                          )}
+                        >
+                          {isSubmitting ? "Submitting..." : "Submit request"}
+                          <CiSaveUp2 />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* small validation hint */}
+                    {!isValid && formCounter === 4 && (
+                      <p className="text-rose-500 text-sm mt-3">Please fill required fields marked with * before submitting.</p>
+                    )}
+                  </form>
+                </div>
+              </div>
+
+              {/* small contact helper */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-100 text-sm text-slate-700 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <FaLinkedinIn />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Prefer a quick chat?</div>
+                    <div className="text-slate-500">Email me directly at <a href="mailto:try.kanishq@gmail.com" className="text-indigo-600">try.kanishq@gmail.com</a></div>
+                    <div className="mt-3 flex gap-3">
+                      <a href="https://www.linkedin.com/in/kanishqsodhani" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                        <FaLinkedinIn className="text-slate-700" />
+                      </a>
+                      <a href="https://github.com/kanishq-17" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                        <IoLogoGithub className="text-slate-700" />
+                      </a>
+                      <a href="https://twitter.com/yourhandle" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition">
+                        <FaXTwitter className="text-slate-700" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
