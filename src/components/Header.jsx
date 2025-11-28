@@ -50,15 +50,6 @@ const Header = () => {
         >
           <FaLinkedin className="hover:text-slate-600 transition cursor-pointer" />
         </Link>
-        <Link
-          to="#"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = "mailto:try.kanishq@gmail.com";
-          }}
-        >
-          <FaEnvelope className="hover:text-slate-600 transition cursor-pointer" />
-        </Link>
       </div>
     </header>
   );
