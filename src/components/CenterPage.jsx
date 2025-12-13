@@ -428,7 +428,7 @@ const CenterPage = () => {
                     </button>
                     <div>
                       <div className="font-medium text-neutral-100">
-                        Pussypodium
+                        INSONAMIA
                       </div>
                       <div className="text-xs text-neutral-500">
                         beat · phonk
