@@ -8,6 +8,8 @@ import { IoReturnDownBack, IoReturnDownForward } from "react-icons/io5";
 import { CiSaveUp2 } from "react-icons/ci";
 import { IoLogoGithub } from "react-icons/io";
 import { FaXTwitter } from "react-icons/fa6";
+import { BiLogoGmail } from "react-icons/bi";
+import emailjs from "@emailjs/browser";
 
 // small helper for classes (no extra dependency)
 const cx = (...args) => args.filter(Boolean).join(" ");
@@ -57,10 +59,11 @@ const LetsCollaborate = () => {
     },
   ]);
 
+  // Form headings - 6 steps (0-5)
   const [formHeading] = useState([
     {
       heading: "Basic Information",
-      title: "Tell me who I’ll be collaborating with.",
+      title: "Tell me who I'll be collaborating with.",
     },
     {
       heading: "Project Overview",
@@ -78,6 +81,10 @@ const LetsCollaborate = () => {
     {
       heading: "Final Notes",
       title: "Share anything else I should know before we begin.",
+    },
+    {
+      heading: "Review & Send",
+      title: "Review your details and send your collaboration request.",
     },
   ]);
 
@@ -181,74 +188,117 @@ const LetsCollaborate = () => {
     toastRef.current = setTimeout(() => setToast(null), 3000);
   }
 
-  // handle final submit (replace with EmailJS or API later)
-  const submitForm = async (data) => {
-    try {
-      // final validation before submit to be safe
-      const ok = await trigger([
-        "fullname",
-        "email",
-        "projectTitle",
-        "building",
-        "projectType",
-        "budgetRange",
-        "timeline",
-      ]);
-      if (!ok) {
-        showToast("error", "Please fill required fields before submitting.");
-        return;
-      }
+  // EmailJS config
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const CONTACT_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  const RECEIVE_EMAIL = "try.kanishq@gmail.com";
 
-      // OPTIONAL: send to server / EmailJS here
-      // console.log("Form submitted:", data);
-      showToast("success", "✅ Request submitted. I will reply soon.");
+  // Update submitForm logic - format as key-value pairs
+  const submitForm = async (data) => {
+    // ALL form values to be sent
+    if (!SERVICE_ID || !CONTACT_TEMPLATE_ID || !PUBLIC_KEY) {
+      showToast(
+        "error",
+        "EmailJS keys missing — open mail client manually or contact directly."
+      );
+      return;
+    }
+
+    // Format all fields as key-value pairs for email
+    const messageBody = `
+New Collaboration Request Received
+
+BASIC INFORMATION:
+Full Name: ${data.fullname || "Not provided"}
+Email: ${data.email || "Not provided"}
+Company/Brand: ${data.company || "Not provided"}
+Project Title: ${data.projectTitle || "Not provided"}
+
+PROJECT OVERVIEW:
+What are you building?: ${data.building || "Not provided"}
+What problem will it solve?: ${data.problemSolve || "Not provided"}
+Reference/Inspiration Link: ${data.inspirationLink || "Not provided"}
+
+PROJECT DETAILS:
+Project Type: ${data.projectType || "Not provided"}
+Budget Range: ${data.budgetRange || "Not provided"}
+Timeline: ${data.timeline || "Not provided"}
+
+REQUIREMENTS & PREFERENCES:
+Do you already have a design ready?: ${data.isDesignReady ? "Yes" : "No"}
+Do you need backend support?: ${data.needBackendSupport ? "Yes" : "No"}
+Is the scope final or still evolving?: ${data.isProjectAtFinal ? "Yes" : "No"}
+Is your deadline fixed?: ${data.isDeadlineFixed ? "Yes" : "No"}
+
+FINAL NOTES:
+${data.detailedMessage || "Not provided"}
+
+---
+Sent at: ${new Date().toLocaleString()}
+Source: ${window.location.href}
+    `.trim();
+
+    const params = {
+      from_name: data.fullname || data.email,
+      from_email: data.email, // User's email
+      to_email: RECEIVE_EMAIL, // Your email
+      message: messageBody,
+      subject: `New Collaboration Request: ${
+        data.projectTitle || "Untitled Project"
+      }`,
+      sent_at: new Date().toLocaleString(),
+      source_page: window.location.href,
+    };
+
+    try {
+      await emailjs.send(SERVICE_ID, CONTACT_TEMPLATE_ID, params, PUBLIC_KEY);
+      showToast("success", "✅ Request sent! I'll reply soon.");
       reset();
       setFormCounter(0);
     } catch (err) {
-      console.error(err);
-      showToast("error", "⚠️ Submission failed. Try again.");
+      console.error("EmailJS send error:", err);
+      showToast(
+        "error",
+        "⚠️ Sending failed — please try again or use the direct email."
+      );
     }
   };
 
-  // mapping of step -> required fields to validate when clicking Next
-  const stepRequiredFields = {
-    0: ["fullname", "email", "projectTitle"], // Step 1
-    1: ["building"], // Step 2
-    2: ["projectType", "budgetRange", "timeline"], // Step 3
-    3: [], // Step 4 toggles optional
-    4: [], // Step 5 final message
-  };
+  // Progress bar: 6 steps (0-5), display StepX/6
+  const progressItems = [0, 1, 2, 3, 4, 5];
 
-  // Next handler that validates current step required fields before allowing next
-  const handleNext = async () => {
-    const fieldsToCheck = stepRequiredFields[formCounter] || [];
-    if (fieldsToCheck.length > 0) {
-      const valid = await trigger(fieldsToCheck);
-      if (!valid) {
-        // validation failed — do not advance; errors will show inline
-        showToast("error", "Please fill required fields in this step.");
-        return;
-      }
-    }
-    // all good -> advance
-    setFormCounter((prev) => Math.min(prev + 1, 4));
-    // scroll to top of form area for better UX on mobile
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Back handler
   const handleBack = () => {
     setFormCounter((prev) => Math.max(prev - 1, 0));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const progressItems = [0, 1, 2, 3, 4];
+  const handleNext = async () => {
+    const stepRequiredFields = {
+      0: ["fullname", "email", "projectTitle"],
+      1: ["building"],
+      2: ["projectType", "budgetRange", "timeline"],
+      3: [], // Toggles are optional
+      4: [], // Final notes optional
+      5: [], // Review step - no validation needed
+    };
+    const fieldsToCheck = stepRequiredFields[formCounter] || [];
+    if (fieldsToCheck.length > 0) {
+      const valid = await trigger(fieldsToCheck);
+      if (!valid) {
+        showToast("error", "Please fill required fields in this step.");
+        return;
+      }
+    }
+    setFormCounter((prev) => Math.min(prev + 1, 5));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // KEYDOWN handler: prevent Enter from submitting the form unless on final step
   const onFormKeyDown = (e) => {
     if (e.key === "Enter") {
-      // allow Enter to submit only when on final step (formCounter === 4)
-      if (formCounter < 4) {
+      // allow Enter to submit only when on final step (formCounter === 5)
+      if (formCounter < 5) {
         e.preventDefault();
         // optionally move focus to next field instead
       }
@@ -256,12 +306,12 @@ const LetsCollaborate = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-linear-to-br from-[#fff8ef] to-[#f5eaff] p-6 md:p-10 lg:p-14">
+    <div className="w-full min-h-screen bg-linear-to-br from-[#fff8ef] to-[#f5eaff] p-1.5 xs:p-2 sm:p-4 md:p-6 lg:p-10 xl:p-14">
       {/* Toast */}
       {toast && (
         <div
           className={cx(
-            "fixed right-6 top-6 z-50 px-4 py-2 rounded-md shadow-lg",
+            "fixed right-1 top-2 xs:right-2 xs:top-4 sm:right-6 sm:top-6 z-50 px-2 py-1.5 xs:px-3 xs:py-2 sm:px-4 sm:py-2 rounded-md shadow-lg text-xs xs:text-sm max-w-[calc(100vw-0.5rem)] xs:max-w-[calc(100vw-1rem)]",
             toast.type === "success"
               ? "bg-emerald-600 text-white"
               : "bg-rose-500 text-white"
@@ -273,23 +323,24 @@ const LetsCollaborate = () => {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl leading-tight text-slate-900">
-            Have a design project <br /> and need help?
+        <div className="mb-4 xs:mb-6 sm:mb-8">
+          <h1 className="font-extrabold text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight text-slate-900 px-1 xs:px-0">
+            Have a design project <br className="hidden xs:block" /> and need
+            help?
           </h1>
-          <p className="mt-4 text-slate-700 max-w-2xl">
-            Fill a quick brief — I’ll review and respond with a plan & estimate.
+          <p className="mt-2 xs:mt-3 sm:mt-4 text-xs xs:text-sm sm:text-base text-slate-700 max-w-2xl px-1 xs:px-0">
+            Fill a quick brief — I'll review and respond with a plan & estimate.
             You can also email directly at{" "}
-            <strong>try.kanishq@gmail.com</strong>.
+            <strong className="break-all">try.kanishq@gmail.com</strong>.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 gap-4 xs:gap-6 sm:gap-8 xl:gap-12 lg:grid-cols-12">
           {/* Left: Reviews + QnA (col-span 7/12) */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="lg:col-span-7 space-y-4 xs:space-y-6 sm:space-y-8 min-w-0">
             {/* Review card */}
-            <div className="flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-md p-5 border border-slate-100">
-              <div className="w-full md:w-56 h-44 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
+            <div className="flex flex-col md:flex-row gap-3 xs:gap-4 md:gap-6 bg-white rounded-xl xs:rounded-2xl shadow-md p-2.5 xs:p-3 sm:p-4 md:p-5 border border-slate-100">
+              <div className="w-full md:w-56 h-32 xs:h-36 sm:h-40 md:h-44 rounded-xl xs:rounded-2xl overflow-hidden bg-slate-100 shrink-0 flex justify-center items-center">
                 <img
                   src={reviewUser[reviewCounter].img}
                   alt=""
@@ -297,17 +348,17 @@ const LetsCollaborate = () => {
                 />
               </div>
 
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base xs:text-lg sm:text-xl font-semibold wrap-break-word">
                       {reviewUser[reviewCounter].name}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-xs xs:text-sm text-slate-600">
                       {reviewUser[reviewCounter].title}
                     </p>
                   </div>
-                  <div>
+                  <div className="shrink-0">
                     {reviewUser[reviewCounter].linkedIn && (
                       <Link
                         to={reviewUser[reviewCounter].linkedIn}
@@ -315,33 +366,37 @@ const LetsCollaborate = () => {
                         rel="noreferrer"
                         className="text-slate-700 hover:text-indigo-600"
                       >
-                        <FaLinkedinIn />
+                        <FaLinkedinIn className="text-sm xs:text-base" />
                       </Link>
                     )}
                   </div>
                 </div>
 
-                <p className="mt-4 text-slate-700">
+                <p className="mt-2 xs:mt-3 sm:mt-4 text-xs xs:text-sm sm:text-base text-slate-700 leading-relaxed">
                   {reviewUser[reviewCounter].comments}
                 </p>
               </div>
             </div>
 
             {/* QnA */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-              <h4 className="text-lg font-semibold mb-4">Common questions</h4>
-              <div className="space-y-4">
+            <div className="bg-white p-2.5 xs:p-3 sm:p-4 md:p-6 rounded-xl xs:rounded-2xl shadow-sm border border-slate-100">
+              <h4 className="text-base xs:text-lg font-semibold mb-3 xs:mb-4">
+                Common questions
+              </h4>
+              <div className="space-y-3 xs:space-y-4">
                 {qna.map((qa) => (
                   <div key={qa.id}>
                     <button
                       onClick={() => showQna(qa.id)}
-                      className="w-full text-left flex items-center justify-between py-3"
+                      className="w-full text-left flex items-center justify-between py-2 xs:py-3 gap-2"
                       aria-expanded={qa.isOpen}
                     >
-                      <div>
-                        <h5 className="font-medium text-base">{qa.question}</h5>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="font-medium text-xs xs:text-sm sm:text-base leading-snug">
+                          {qa.question}
+                        </h5>
                       </div>
-                      <div className="text-2xl">
+                      <div className="text-xl xs:text-2xl min-w-6 xs:min-w-8 flex items-center justify-center shrink-0">
                         <span
                           className={`${
                             qa.isOpen ? "-rotate-90" : "rotate-0"
@@ -355,13 +410,17 @@ const LetsCollaborate = () => {
                     <div
                       className={cx(
                         "overflow-hidden transition-all duration-300",
-                        qa.isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                        qa.isOpen
+                          ? "max-h-96 opacity-100 py-2"
+                          : "max-h-0 opacity-0"
                       )}
                     >
-                      <p className="text-slate-700">{qa.answer}</p>
+                      <p className="text-xs xs:text-sm sm:text-base text-slate-700 leading-relaxed">
+                        {qa.answer}
+                      </p>
                     </div>
 
-                    <hr className="my-4" />
+                    <hr className="my-3 xs:my-4" />
                   </div>
                 ))}
               </div>
@@ -369,17 +428,20 @@ const LetsCollaborate = () => {
           </div>
 
           {/* Right: Multi-step form (col-span 5/12) */}
-          <div className="lg:col-span-5">
-            <div className="sticky top-6 space-y-6">
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md">
+          <div className="lg:col-span-5 min-w-0">
+            <div className="sticky top-1 xs:top-2 sm:top-4 md:top-6 space-y-4 xs:space-y-5 sm:space-y-6">
+              <div className="bg-white rounded-xl xs:rounded-2xl p-2.5 xs:p-3 sm:p-4 md:p-6 border border-slate-100 shadow-md">
                 {/* Step progress */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between mb-3 xs:mb-4 gap-2">
+                  <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
                     {progressItems.map((p) => (
-                      <div key={p} className="flex items-center gap-2">
+                      <div
+                        key={p}
+                        className="flex items-center gap-0.5 xs:gap-1"
+                      >
                         <div
                           className={cx(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+                            "w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs xs:text-xs sm:text-sm font-medium",
                             formCounter === p
                               ? "bg-indigo-600 text-white"
                               : "bg-slate-200 text-slate-700"
@@ -391,7 +453,7 @@ const LetsCollaborate = () => {
                         {p < progressItems.length - 1 && (
                           <div
                             className={cx(
-                              "w-6 h-0.5",
+                              "w-3 xs:w-4 sm:w-6 h-0.5",
                               formCounter > p ? "bg-indigo-600" : "bg-slate-200"
                             )}
                           />
@@ -400,21 +462,21 @@ const LetsCollaborate = () => {
                     ))}
                   </div>
 
-                  <div className="text-sm text-slate-500">
-                    Step {formCounter + 1} / 5
+                  <div className="text-xs xs:text-sm text-slate-500 whitespace-nowrap">
+                    Step {formCounter + 1} / 6
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-base xs:text-lg sm:text-xl font-semibold">
                     {formHeading[formCounter].heading}
                   </h2>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <p className="text-xs xs:text-sm text-slate-600 mt-1 leading-relaxed">
                     {formHeading[formCounter].title}
                   </p>
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-2 xs:mt-3 sm:mt-5">
                   {/* FORM - single react-hook-form instance */}
                   {/* Add onKeyDown to prevent Enter submitting early */}
                   <form
@@ -433,12 +495,12 @@ const LetsCollaborate = () => {
                             {...register("fullname", {
                               required: "Full name is required",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="Kanishq Sodhani"
                             type="text"
                           />
                           {errors.fullname && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.fullname.message}
                             </p>
                           )}
@@ -450,7 +512,7 @@ const LetsCollaborate = () => {
                           </label>
                           <input
                             {...register("company")}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="OpenAI"
                             type="text"
                           />
@@ -468,12 +530,12 @@ const LetsCollaborate = () => {
                                 message: "Invalid email",
                               },
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="you@company.com"
                             type="email"
                           />
                           {errors.email && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.email.message}
                             </p>
                           )}
@@ -487,12 +549,12 @@ const LetsCollaborate = () => {
                             {...register("projectTitle", {
                               required: "Project title is required",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="Name your project"
                             type="text"
                           />
                           {errors.projectTitle && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.projectTitle.message}
                             </p>
                           )}
@@ -511,12 +573,12 @@ const LetsCollaborate = () => {
                             {...register("building", {
                               required: "This is required",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="Landing page, Dashboard, App UI..."
                             type="text"
                           />
                           {errors.building && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.building.message}
                             </p>
                           )}
@@ -528,7 +590,7 @@ const LetsCollaborate = () => {
                           </label>
                           <input
                             {...register("problemSolve")}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="Improve UX, increase conversions..."
                             type="text"
                           />
@@ -540,7 +602,7 @@ const LetsCollaborate = () => {
                           </label>
                           <input
                             {...register("inspirationLink")}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             placeholder="Figma / Website link"
                             type="text"
                           />
@@ -559,7 +621,7 @@ const LetsCollaborate = () => {
                             {...register("projectType", {
                               required: "Select project type",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             defaultValue=""
                           >
                             <option value="" disabled>
@@ -579,7 +641,7 @@ const LetsCollaborate = () => {
                             </option>
                           </select>
                           {errors.projectType && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.projectType.message}
                             </p>
                           )}
@@ -593,7 +655,7 @@ const LetsCollaborate = () => {
                             {...register("budgetRange", {
                               required: "Select budget range",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             defaultValue=""
                           >
                             <option value="" disabled>
@@ -610,7 +672,7 @@ const LetsCollaborate = () => {
                             <option value="Not sure yet">Not sure yet</option>
                           </select>
                           {errors.budgetRange && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.budgetRange.message}
                             </p>
                           )}
@@ -624,7 +686,7 @@ const LetsCollaborate = () => {
                             {...register("timeline", {
                               required: "Select timeline",
                             })}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 text-xs xs:text-sm sm:text-base"
                             defaultValue=""
                           >
                             <option value="" disabled>
@@ -637,7 +699,7 @@ const LetsCollaborate = () => {
                             <option value="Not sure">Not sure</option>
                           </select>
                           {errors.timeline && (
-                            <p className="text-rose-500 text-sm mt-1">
+                            <p className="text-rose-500 text-xs xs:text-sm mt-1">
                               {errors.timeline.message}
                             </p>
                           )}
@@ -647,39 +709,41 @@ const LetsCollaborate = () => {
 
                     {/* Step 3: Toggle questions (boolean true/false) */}
                     {formCounter === 3 && (
-                      <div className="space-y-4">
+                      <div className="space-y-3 xs:space-y-4">
                         <Controller
                           control={control}
                           name="isDesignReady"
                           render={({ field: { value, onChange } }) => (
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <label className="font-medium">
+                            <div className="flex items-center justify-between gap-2 xs:gap-3">
+                              <div className="flex-1 min-w-0">
+                                <label className="font-medium text-xs xs:text-sm sm:text-base">
                                   Do you already have a design ready?
                                 </label>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-xs xs:text-sm text-slate-500 mt-0.5">
                                   If yes, I can implement directly.
                                 </p>
                               </div>
 
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 xs:gap-3 shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => onChange(!value)}
                                   className={cx(
-                                    "w-14 h-8 rounded-full p-1 transition",
+                                    "w-12 h-7 xs:w-14 xs:h-8 rounded-full p-0.5 xs:p-1 transition",
                                     value ? "bg-rose-500" : "bg-slate-200"
                                   )}
                                   aria-pressed={value}
                                 >
                                   <span
                                     className={cx(
-                                      "block w-6 h-6 rounded-full bg-white transition-transform",
-                                      value ? "translate-x-6" : "translate-x-0"
+                                      "block w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-white transition-transform",
+                                      value
+                                        ? "translate-x-5 xs:translate-x-6"
+                                        : "translate-x-0"
                                     )}
                                   />
                                 </button>
-                                <span className="text-sm text-slate-600">
+                                <span className="text-xs xs:text-sm text-slate-600 whitespace-nowrap">
                                   {value ? "Yes" : "No"}
                                 </span>
                               </div>
@@ -691,35 +755,37 @@ const LetsCollaborate = () => {
                           control={control}
                           name="needBackendSupport"
                           render={({ field: { value, onChange } }) => (
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <label className="font-medium">
+                            <div className="flex items-center justify-between gap-2 xs:gap-3">
+                              <div className="flex-1 min-w-0">
+                                <label className="font-medium text-xs xs:text-sm sm:text-base">
                                   Do you need backend support?
                                 </label>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-xs xs:text-sm text-slate-500 mt-0.5">
                                   APIs, database, auth — I can help or integrate
                                   with your backend.
                                 </p>
                               </div>
 
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 xs:gap-3 shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => onChange(!value)}
                                   className={cx(
-                                    "w-14 h-8 rounded-full p-1 transition",
+                                    "w-12 h-7 xs:w-14 xs:h-8 rounded-full p-0.5 xs:p-1 transition",
                                     value ? "bg-rose-500" : "bg-slate-200"
                                   )}
                                   aria-pressed={value}
                                 >
                                   <span
                                     className={cx(
-                                      "block w-6 h-6 rounded-full bg-white transition-transform",
-                                      value ? "translate-x-6" : "translate-x-0"
+                                      "block w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-white transition-transform",
+                                      value
+                                        ? "translate-x-5 xs:translate-x-6"
+                                        : "translate-x-0"
                                     )}
                                   />
                                 </button>
-                                <span className="text-sm text-slate-600">
+                                <span className="text-xs xs:text-sm text-slate-600 whitespace-nowrap">
                                   {value ? "Yes" : "No"}
                                 </span>
                               </div>
@@ -731,34 +797,36 @@ const LetsCollaborate = () => {
                           control={control}
                           name="isProjectAtFinal"
                           render={({ field: { value, onChange } }) => (
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <label className="font-medium">
+                            <div className="flex items-center justify-between gap-2 xs:gap-3">
+                              <div className="flex-1 min-w-0">
+                                <label className="font-medium text-xs xs:text-sm sm:text-base">
                                   Is the scope final or still evolving?
                                 </label>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-xs xs:text-sm text-slate-500 mt-0.5">
                                   Final scopes help with precise estimates.
                                 </p>
                               </div>
 
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 xs:gap-3 shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => onChange(!value)}
                                   className={cx(
-                                    "w-14 h-8 rounded-full p-1 transition",
+                                    "w-12 h-7 xs:w-14 xs:h-8 rounded-full p-0.5 xs:p-1 transition",
                                     value ? "bg-rose-500" : "bg-slate-200"
                                   )}
                                   aria-pressed={value}
                                 >
                                   <span
                                     className={cx(
-                                      "block w-6 h-6 rounded-full bg-white transition-transform",
-                                      value ? "translate-x-6" : "translate-x-0"
+                                      "block w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-white transition-transform",
+                                      value
+                                        ? "translate-x-5 xs:translate-x-6"
+                                        : "translate-x-0"
                                     )}
                                   />
                                 </button>
-                                <span className="text-sm text-slate-600">
+                                <span className="text-xs xs:text-sm text-slate-600 whitespace-nowrap">
                                   {value ? "Yes" : "No"}
                                 </span>
                               </div>
@@ -770,34 +838,36 @@ const LetsCollaborate = () => {
                           control={control}
                           name="isDeadlineFixed"
                           render={({ field: { value, onChange } }) => (
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <label className="font-medium">
+                            <div className="flex items-center justify-between gap-2 xs:gap-3">
+                              <div className="flex-1 min-w-0">
+                                <label className="font-medium text-xs xs:text-sm sm:text-base">
                                   Is your deadline fixed?
                                 </label>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-xs xs:text-sm text-slate-500 mt-0.5">
                                   Fixed deadlines may need priority planning.
                                 </p>
                               </div>
 
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 xs:gap-3 shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => onChange(!value)}
                                   className={cx(
-                                    "w-14 h-8 rounded-full p-1 transition",
+                                    "w-12 h-7 xs:w-14 xs:h-8 rounded-full p-0.5 xs:p-1 transition",
                                     value ? "bg-rose-500" : "bg-slate-200"
                                   )}
                                   aria-pressed={value}
                                 >
                                   <span
                                     className={cx(
-                                      "block w-6 h-6 rounded-full bg-white transition-transform",
-                                      value ? "translate-x-6" : "translate-x-0"
+                                      "block w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-white transition-transform",
+                                      value
+                                        ? "translate-x-5 xs:translate-x-6"
+                                        : "translate-x-0"
                                     )}
                                   />
                                 </button>
-                                <span className="text-sm text-slate-600">
+                                <span className="text-xs xs:text-sm text-slate-600 whitespace-nowrap">
                                   {value ? "Yes" : "No"}
                                 </span>
                               </div>
@@ -807,68 +877,154 @@ const LetsCollaborate = () => {
                       </div>
                     )}
 
-                    {/* Step 4: final message */}
+                    {/* Step 4: Final Notes - textarea for detailed message */}
                     {formCounter === 4 && (
-                      <div className="space-y-4">
+                      <div className="space-y-3 xs:space-y-4">
                         <div>
                           <label className="text-xs font-medium">
                             Tell me more about your project
                           </label>
                           <textarea
                             {...register("detailedMessage")}
-                            className="w-full mt-2 p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 min-h-[120px]"
+                            className="w-full mt-1.5 xs:mt-2 p-2 xs:p-2.5 sm:p-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 min-h-[90px] xs:min-h-[100px] sm:min-h-[120px] text-xs xs:text-sm sm:text-base"
                             placeholder="Explain your idea, required features, your goals..."
                           />
                         </div>
 
-                        <div className="text-sm text-slate-500">
+                        <div className="text-xs xs:text-sm text-slate-500">
                           You can also attach links to Figma, Drive, or examples
                           in the message above.
                         </div>
                       </div>
                     )}
 
+                    {/* Step 5: Review & Send (read only review + Send button) */}
+                    {formCounter === 5 && (
+                      <div className="space-y-2 xs:space-y-3 text-xs xs:text-sm">
+                        <div className="font-semibold text-base xs:text-lg mb-1.5 xs:mb-2">
+                          Review Your Details:
+                        </div>
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Full Name:</span>{" "}
+                          {watch("fullname")}
+                        </div>
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Email:</span>{" "}
+                          {watch("email")}
+                        </div>
+                        {watch("company") && (
+                          <div className="wrap-break-word">
+                            <span className="font-medium">Company:</span>{" "}
+                            {watch("company")}
+                          </div>
+                        )}
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Project Title:</span>{" "}
+                          {watch("projectTitle")}
+                        </div>
+                        <div className="wrap-break-word">
+                          <span className="font-medium">
+                            What are you building?
+                          </span>{" "}
+                          {watch("building")}
+                        </div>
+                        {watch("problemSolve") && (
+                          <div className="wrap-break-word">
+                            <span className="font-medium">Problem Solved:</span>{" "}
+                            {watch("problemSolve")}
+                          </div>
+                        )}
+                        {watch("inspirationLink") && (
+                          <div className="break-all">
+                            <span className="font-medium">
+                              Reference / Inspiration:
+                            </span>{" "}
+                            {watch("inspirationLink")}
+                          </div>
+                        )}
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Project Type:</span>{" "}
+                          {watch("projectType")}
+                        </div>
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Budget Range:</span>{" "}
+                          {watch("budgetRange")}
+                        </div>
+                        <div className="wrap-break-word">
+                          <span className="font-medium">Timeline:</span>{" "}
+                          {watch("timeline")}
+                        </div>
+                        <div>
+                          <span className="font-medium">Design Ready?</span>{" "}
+                          {watch("isDesignReady") ? "Yes" : "No"}
+                        </div>
+                        <div>
+                          <span className="font-medium">
+                            Need Backend Support?
+                          </span>{" "}
+                          {watch("needBackendSupport") ? "Yes" : "No"}
+                        </div>
+                        <div>
+                          <span className="font-medium">Is Scope Final?</span>{" "}
+                          {watch("isProjectAtFinal") ? "Yes" : "No"}
+                        </div>
+                        <div>
+                          <span className="font-medium">Fixed Deadline?</span>{" "}
+                          {watch("isDeadlineFixed") ? "Yes" : "No"}
+                        </div>
+                        {watch("detailedMessage") && (
+                          <div className="mt-2 wrap-break-word">
+                            <span className="font-medium">Details:</span>{" "}
+                            {watch("detailedMessage")}
+                          </div>
+                        )}
+                        <div className="mt-2 xs:mt-3 text-slate-600 text-xs">
+                          If something is wrong, use Back to fix it!
+                        </div>
+                      </div>
+                    )}
+
                     {/* Controls (Back / Next / Submit) */}
-                    <div className="mt-6 flex items-center justify-between gap-3">
+                    <div className="mt-3 xs:mt-4 sm:mt-6 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-2 xs:gap-3">
                       <button
                         type="button"
                         onClick={handleBack}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:shadow-sm"
+                        className="inline-flex items-center justify-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1.5 xs:py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:shadow-sm text-xs xs:text-sm sm:text-base"
+                        disabled={formCounter === 0}
                       >
-                        <IoReturnDownBack /> Back
+                        <IoReturnDownBack className="text-sm xs:text-base" />{" "}
+                        <span>Back</span>
                       </button>
-
-                      {/* If last step -> show submit else next */}
-                      {formCounter < 4 ? (
+                      {formCounter < 5 ? (
                         <button
                           type="button"
                           onClick={handleNext}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                          className="inline-flex items-center justify-center gap-1.5 xs:gap-2 px-3 xs:px-4 py-1.5 xs:py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs xs:text-sm sm:text-base"
                         >
-                          Next <IoReturnDownForward />
+                          <span>Next</span>{" "}
+                          <IoReturnDownForward className="text-sm xs:text-base" />
                         </button>
                       ) : (
                         <button
                           type="submit"
                           disabled={!isValid || isSubmitting}
                           className={cx(
-                            "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium",
+                            "inline-flex items-center justify-center gap-1.5 xs:gap-2 px-3 xs:px-4 py-1.5 xs:py-2 rounded-lg font-medium text-xs xs:text-sm sm:text-base",
                             !isValid || isSubmitting
                               ? "bg-slate-300 text-slate-600 cursor-not-allowed"
                               : "bg-rose-600 text-white hover:bg-rose-700"
                           )}
                         >
-                          {isSubmitting ? "Submitting..." : "Submit request"}
-                          <CiSaveUp2 />
+                          <span>{isSubmitting ? "Sending..." : "Send"}</span>
+                          <CiSaveUp2 className="text-sm xs:text-base" />
                         </button>
                       )}
                     </div>
-
-                    {/* small validation hint */}
-                    {!isValid && formCounter === 4 && (
-                      <p className="text-rose-500 text-sm mt-3">
+                    {/* Only show warning on send (step 5) */}
+                    {!isValid && formCounter === 5 && (
+                      <p className="text-rose-500 text-xs xs:text-sm mt-2 xs:mt-3">
                         Please fill required fields marked with * before
-                        submitting.
+                        sending.
                       </p>
                     )}
                   </form>
@@ -876,46 +1032,50 @@ const LetsCollaborate = () => {
               </div>
 
               {/* small contact helper */}
-              <div className="bg-white rounded-2xl p-4 border border-slate-100 text-sm text-slate-700 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                    <FaLinkedinIn />
+              <div className="bg-white rounded-xl xs:rounded-2xl p-2.5 xs:p-3 sm:p-4 border border-slate-100 text-xs xs:text-sm text-slate-700 shadow-sm">
+                <div className="flex items-start gap-2 xs:gap-3">
+                  <div className="shrink-0 w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
+                    <BiLogoGmail className="text-lg xs:text-xl sm:text-2xl" />
                   </div>
-                  <div>
-                    <div className="font-semibold">Prefer a quick chat?</div>
-                    <div className="text-slate-500">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-xs xs:text-sm">
+                      Prefer a quick chat?
+                    </div>
+                    <div className="text-slate-500 text-xs xs:text-sm mt-0.5">
                       Email me directly at{" "}
                       <a
-                        href="mailto:try.kanishq@gmail.com"
-                        className="text-indigo-600"
+                        href="https://mail.google.com/mail/?view=cm&to=try.kanishq@gmail.com"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-rose-600 underline underline-offset-2 break-all hover:text-rose-700 transition-all"
                       >
                         try.kanishq@gmail.com
                       </a>
                     </div>
-                    <div className="mt-3 flex gap-3">
+                    <div className="mt-2 xs:mt-3 flex gap-2 xs:gap-3">
                       <a
                         href="https://www.linkedin.com/in/kanishqsodhani"
                         target="_blank"
                         rel="noreferrer"
-                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                        className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
                       >
-                        <FaLinkedinIn className="text-slate-700" />
+                        <FaLinkedinIn className="text-slate-700 text-xs xs:text-sm" />
                       </a>
                       <a
                         href="https://github.com/kanishq-17"
                         target="_blank"
                         rel="noreferrer"
-                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                        className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
                       >
-                        <IoLogoGithub className="text-slate-700" />
+                        <IoLogoGithub className="text-slate-700 text-xs xs:text-sm" />
                       </a>
                       <a
                         href="https://twitter.com/yourhandle"
                         target="_blank"
                         rel="noreferrer"
-                        className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
+                        className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 flex items-center justify-center hover:border-rose-400 transition"
                       >
-                        <FaXTwitter className="text-slate-700" />
+                        <FaXTwitter className="text-slate-700 text-xs xs:text-sm" />
                       </a>
                     </div>
                   </div>

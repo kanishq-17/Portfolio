@@ -6,7 +6,7 @@ import { RxChatBubble } from "react-icons/rx";
 import { VscGithubAlt } from "react-icons/vsc";
 import { HiOutlineEye } from "react-icons/hi";
 
-export default function ProjectDetails({ project, onCloseProject }) {
+export default function ProjectDetails({ project, onCloseProject, showInline }) {
   const [isVisible, setIsVisible] = useState(false); // for fade in
   const [isClosing, setIsClosing] = useState(false); // for fade out
   const closeTimeoutRef = useRef(null);
@@ -53,7 +53,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
     <div
       key={project?.id}
       id="project-details"
-      className={`max-w-5xl mx-auto bg-white/50 backdrop-blur-md border border-white/8 rounded-xl p-6 relative transform transition-all duration-300 ease-out
+      className={`max-w-5xl w-full mx-auto bg-white/50 backdrop-blur-md border border-white/8 rounded-xl ${showInline ? 'p-3 sm:p-4 my-0' : 'p-4 sm:p-6 my-6'} relative transform transition-all duration-300 ease-out
         ${
           isVisible && !isClosing
             ? "opacity-100 translate-y-0"
@@ -67,15 +67,16 @@ export default function ProjectDetails({ project, onCloseProject }) {
       {/* Close button */}
       <button
         onClick={handleClose}
-        className="cursor-pointer absolute top-4 right-4 text-xl p-2 rounded-md hover:bg-white/10 transition"
+        className="z-30 cursor-pointer absolute top-2 right-2 text-lg sm:text-base p-2 bg-white/90 border border-white/40 rounded-full shadow hover:bg-white active:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-indigo-300"
         aria-label="Close project details"
+        style={{ boxShadow: '0 2px 8px rgba(50,60,80,0.10)' }}
       >
         <IoCloseOutline />
       </button>
 
       {/* header */}
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-white/8 bg-white/4">
+        <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-lg overflow-hidden shrink-0 border border-white/8 bg-white/4">
           <img
             src={project?.avatarUrl}
             alt={`${project?.projectName} avatar`}
@@ -83,15 +84,13 @@ export default function ProjectDetails({ project, onCloseProject }) {
           />
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex-1 min-w-0 w-full">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* LIVE indicator with pulse */}
             <div className="flex items-center gap-2">
               <div className="relative w-8 h-6 flex items-center">
-                {/* ping / pulse circle */}
-                <span className="absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-80 animate-ping" />
-                {/* solid dot */}
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500 border border-white" />
+                <span className={`absolute inline-flex h-3 w-3 rounded-full ${project?.isLive ? 'bg-green-400' : 'bg-yellow-400'} opacity-80 animate-ping`} />
+                <span className={`relative inline-flex h-3 w-3 rounded-full ${project?.isLive ? 'bg-green-500' : 'bg-yellow-400'} border border-white`} />
               </div>
               <p className="text-[.65rem] rounded-full w-fit px-2 py-1 bg-neutral-300/20 cursor-default flex items-center justify-start gap-1 font-medium text-slate-800">
                 {project?.isLive ? "LIVE" : "IN PROGRESS"}
@@ -103,7 +102,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
             </p>
           </div>
 
-          <h1 className="font-extrabold text-2xl sm:text-3xl mt-3 truncate">
+          <h1 className="font-extrabold text-xl sm:text-2xl md:text-3xl mt-2 sm:mt-3 truncate">
             {project?.projectName}
           </h1>
 
@@ -114,7 +113,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
       </div>
 
       {/* action buttons inline: Contact, GitHub, Preview */}
-      <div className="flex items-center gap-3 mt-6">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 mt-6 w-full">
         {/* Contact */}
         {project?.contact ? (
           <a href={project.contact} target="_blank" rel="noopener noreferrer">
@@ -190,7 +189,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
       </div>
 
       {/* tech stack */}
-      <div className="flex flex-wrap items-center gap-3 mt-5">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-5 w-full">
         {project?.techStack?.map((t) => (
           <span
             key={t}
@@ -202,7 +201,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
       </div>
 
       {/* details grid */}
-      <div className="flex flex-col lg:flex-row items-start justify-start w-full gap-6 mt-6">
+      <div className="flex flex-col lg:flex-row gap-6 mt-6 w-full">
         {/* detail1 expected to be an array */}
         <div className="flex-1 grid grid-cols-1 gap-4">
           {project?.detail1?.map((details, index) => (
@@ -245,7 +244,7 @@ export default function ProjectDetails({ project, onCloseProject }) {
         </div>
 
         {/* detail2 block */}
-        <div className="w-full lg:w-1/3 rounded-xl bg-white/6 p-5 border border-white/8">
+        <div className="w-full lg:w-1/3 rounded-xl bg-white/6 p-4 sm:p-5 border border-white/8 mt-5 lg:mt-0">
           <h2 className="font-semibold text-2xl text-slate-900">
             {project?.detail2?.heading} —{" "}
             <span className="text-indigo-600 font-bold">

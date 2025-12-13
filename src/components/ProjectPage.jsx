@@ -1,5 +1,5 @@
 // ProjectPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectDetails from "./ProjectDetails";
 import { FaReact } from "react-icons/fa";
@@ -10,6 +10,16 @@ import { FaReact } from "react-icons/fa";
  * - Right: project details OR placeholder (45%)
  * - Preserves card & details sizes and logic
  */
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return width;
+}
 
 const ProjectPage = () => {
   // --- Projects data (unchanged content) ---
@@ -442,6 +452,10 @@ const ProjectPage = () => {
 
   const closeProject = () => setSelectedProject(null);
 
+  const width = useWindowWidth();
+  const detailsInline = width < 768;
+  const [openIndex, setOpenIndex] = useState(null); // for mobile inline mode
+
   // derive current list
   // const currentList =
   projectTracker === 1
@@ -451,14 +465,14 @@ const ProjectPage = () => {
     : nextProjects;
 
   return (
-    <div className="w-full bg-neutral-100/50 px-8 py-16">
+    <div className="w-full bg-neutral-100/50 px-2 sm:px-4 md:px-8 py-8 md:py-16 max-w-full overflow-x-hidden">
       {/* MAIN HEADING */}
-      <h1 className="font-extrabold text-6xl sm:text-5xl tracking-tight text-slate-900 mb-10">
+      <h1 className="font-extrabold text-3xl xs:text-4xl sm:text-5xl md:text-6xl tracking-tight text-slate-900 mb-6 md:mb-10 text-center md:text-left">
         Meet some of my works
       </h1>
 
       {/* FILTER TABS */}
-      <div className="flex items-center gap-4 mb-10">
+      <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4 mb-6 md:mb-10">
         <TabButton
           label="React"
           active={projectTracker === 1}
@@ -480,48 +494,54 @@ const ProjectPage = () => {
       </div>
 
       {/* PROJECT SECTION */}
-      <div className="project-section flex items-start mt-12">
+      <div className="project-section flex flex-col md:flex-row items-start mt-8 md:mt-12 gap-8 md:gap-0">
         {/* PROJECT SELECTION LEFT SIDE (UNCHANGED SIZE) */}
-        <div className="project-selection w-[55%]">
-          <div className="flex flex-wrap items-start justify-start gap-6">
+        <div className="project-selection w-full md:w-[55%] max-w-full">
+          <div className="flex flex-wrap items-start justify-start gap-4 md:gap-6">
             <ProjectCard
               reactProjects={reactProjects}
               nodeProjects={nodeProjects}
               nextProjects={nextProjects}
               projectTrackerIndex={projectTracker}
-              onOpenProject={openProject}
+              detailsInline={detailsInline}
+              openIndex={openIndex}
+              setOpenIndex={setOpenIndex}
+              onOpenProject={openProject} // only for desktop
+              selectedProject={selectedProject}
+              setSelectedProject={setSelectedProject}
             />
           </div>
         </div>
 
         {/* PROJECT DETAILS RIGHT SIDE (UNCHANGED SIZE) */}
-        <div className="project-information w-[45%] sticky top-10">
-          {/* If no project selected → show placeholder */}
-          {!selectedProject && (
-            <div className="w-full h-[420px] bg-white/70 backdrop-blur-md rounded-2xl border border-slate-200/60 shadow-md flex flex-col items-center justify-center text-center p-8 animate-fadeIn">
-              <div className="p-4 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 text-white shadow-md mb-5">
-                <FaReact className="w-10 h-10" />
+        {/* Hide right column on mobile */}
+        {detailsInline ? null : (
+          <div className="project-information w-full md:w-[45%] max-w-full sticky md:top-10 mt-8 md:mt-0">
+            {/* If no project selected → show placeholder */}
+            {!selectedProject && (
+              <div className="w-full min-h-[280px] md:h-[420px] bg-white/70 backdrop-blur-md rounded-2xl border border-slate-200/60 shadow-md flex flex-col items-center justify-center text-center p-5 md:p-8 animate-fadeIn">
+                <div className="p-4 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 text-white shadow-md mb-4 md:mb-5">
+                  <FaReact className="w-8 h-8 md:w-10 md:h-10" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800">
+                  Select a project to view details
+                </h2>
+                <p className="text-sm text-slate-500 mt-3 max-w-xs">
+                  Click on any card from the left to explore features, stack, and
+                  progress.
+                </p>
               </div>
+            )}
 
-              <h2 className="text-2xl font-bold text-slate-800">
-                Select a project to view details
-              </h2>
-
-              <p className="text-sm text-slate-500 mt-3 max-w-xs">
-                Click on any card from the left to explore features, stack, and
-                progress.
-              </p>
-            </div>
-          )}
-
-          {/* When project exists → show real details */}
-          {selectedProject && (
-            <ProjectDetails
-              project={selectedProject}
-              onCloseProject={closeProject}
-            />
-          )}
-        </div>
+            {/* When project exists → show real details */}
+            {selectedProject && (
+              <ProjectDetails
+                project={selectedProject}
+                onCloseProject={closeProject}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

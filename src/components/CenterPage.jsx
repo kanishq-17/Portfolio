@@ -257,9 +257,9 @@ const CenterPage = () => {
   };
 
   return (
-    <div className="w-full mb-10 cursor-default">
+    <div className="w-full mb-10 cursor-default min-h-[75vh]">
       {/* header area (kept same) */}
-      <div className="pl-6 md:pl-14 pt-6 pr-6 select-none">
+      <div className="pl-3 sm:pl-6 md:pl-14 pt-6 pr-3 sm:pr-6 select-none">
         {/* Subheading */}
         <h4 className="text-neutral-500 font-light tracking-wide text-sm md:text-base">
           The{" "}
@@ -271,8 +271,9 @@ const CenterPage = () => {
         <h1
           className="
     font-extrabold
-    text-4xl md:text-5xl lg:text-6xl
+    text-2xl sm:text-3xl md:text-5xl lg:text-6xl
     mt-3 leading-tight text-slate-900
+    wrap-break-word
   "
         >
           Hey, I'm Kanishq
@@ -281,7 +282,7 @@ const CenterPage = () => {
         </h1>
 
         {/* Roles + badges */}
-        <div className="mt-6 flex items-center flex-wrap gap-4 text-neutral-600 text-sm md:text-base">
+        <div className="mt-6 flex flex-wrap items-center gap-3 sm:gap-4 text-neutral-600 text-xs sm:text-sm md:text-base">
           {/* Role badges */}
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 shadow-sm">
@@ -296,7 +297,7 @@ const CenterPage = () => {
           </div>
 
           {/* Skill icons */}
-          <div className="flex items-center gap-3 ml-1 md:ml-6">
+          <div className="flex items-center gap-2 sm:gap-3 ml-1 md:ml-6">
             <span className="p-2 rounded-full bg-neutral-50 text-slate-600">
               <FiPenTool size={18} />
             </span>
@@ -315,11 +316,11 @@ const CenterPage = () => {
       {/* OVERVIEW container (monochrome baseline) */}
       <div
         id="overview-container"
-        className="w-[95%] mx-auto rounded-3xl bg-neutral-100/10 mt-10 p-6 md:p-10 backdrop-blur-sm"
+        className="w-[99%] sm:w-[97%] mx-auto rounded-3xl bg-neutral-100/10 mt-8 sm:mt-10 p-2 xs:p-4 md:p-8 lg:p-10 backdrop-blur-sm min-h-[400px]"
       >
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
           {/* LEFT column */}
-          <div className="flex flex-col gap-6 w-full lg:w-1/3">
+          <div className="flex flex-col gap-3 md:gap-6 w-full lg:w-1/3 min-w-0">
             {/* EXPERIENCE - monochrome */}
             <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
               <div className="flex items-center gap-2 mb-3">
@@ -329,7 +330,7 @@ const CenterPage = () => {
                 </div>
               </div>
 
-              <div className="relative pl-6">
+              <div className="relative pl-2 sm:pl-6">
                 <div className="absolute left-2 top-6 bottom-6 w-0.5 bg-neutral-700/60" />
                 {experience.map((ex, idx) => (
                   <div key={idx} className="relative mb-6 pl-6">
@@ -358,7 +359,7 @@ const CenterPage = () => {
                 <span>People I’ve Worked With</span>
               </div>
 
-              <div className="flex items-center gap-3 my-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 my-4">
                 {people.map((p, i) => (
                   <div key={i} className="group relative">
                     <img
@@ -400,9 +401,9 @@ const CenterPage = () => {
                 <div className="text-xs text-neutral-500">Relax · loop</div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col xs:flex-row items-center gap-2 sm:gap-4">
                 <div
-                  className={`w-20 h-20 rounded-md overflow-hidden border border-neutral-700 transition-all duration-300 ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border border-neutral-700 transition-all duration-300 ${
                     isPlaying
                       ? "filter-none scale-100"
                       : "filter grayscale contrast-[0.7] scale-100"
@@ -416,7 +417,7 @@ const CenterPage = () => {
                   />
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={toggleAudio}
@@ -440,7 +441,7 @@ const CenterPage = () => {
           </div>
 
           {/* RIGHT column */}
-          <div className="w-full lg:w-2/3 flex flex-col gap-6">
+          <div className="w-full lg:w-2/3 flex flex-col gap-3 md:gap-6 min-w-0">
             {/* CURRENT PROJECTS */}
             <div className="rounded-lg border border-neutral-700/40 bg-[#0b0b0b]/70 p-4 text-neutral-300">
               <div className="flex items-center justify-between mb-3">
@@ -453,7 +454,7 @@ const CenterPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 {projects.map((proj, idx) => (
                   <div
                     key={proj.id}
@@ -492,7 +493,7 @@ const CenterPage = () => {
                       </div>
                     </div>
 
-                    <div className="p-3 bg-linear-to-b from-black/60 to-transparent">
+                    <div className="p-2 sm:p-3 bg-linear-to-b from-black/60 to-transparent">
                       <h4 className="text-lg font-semibold text-neutral-50">
                         {proj.title}
                       </h4>
@@ -533,7 +534,7 @@ const CenterPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
                 {/* React */}
                 <div className="group">
                   <div className="flex items-center gap-3 p-3 rounded-md transition-transform duration-300 transform filter grayscale group-hover:filter-none hover:scale-105">
@@ -638,7 +639,7 @@ const CenterPage = () => {
                   <span>How I work</span>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
+                <div className="flex flex-col md:flex-row items-start gap-4 md:gap-6 mt-4">
                   <div className="flex flex-col gap-3 w-full md:w-1/4">
                     {steps.map((step) => (
                       <button
@@ -660,7 +661,7 @@ const CenterPage = () => {
                     ))}
                   </div>
 
-                  <div className="flex-1 bg-black/30 rounded-md p-4">
+                  <div className="flex-1 bg-black/30 rounded-md p-3 sm:p-4">
                     <h3 className="font-bold text-2xl text-white">
                       {steps.find((s) => s.id === activeStep)?.heading}
                     </h3>
